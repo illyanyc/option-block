@@ -23,15 +23,15 @@ contract Options {
         address payable buyer;  //Buyer of option
     }
 
-    uint ethPrice;
-    uint stockPrice;
+    uint public ethPrice;
+    uint public stockPrice;
 
     option[] public options;
 
     /***
         For Testing Only
     ***/
-    uint fakenow = block.timestamp;
+    uint public fakenow  = block.timestamp;
     function random() private view returns (uint) {
         return uint(keccak256(abi.encode(block.timestamp)));
     }
@@ -57,6 +57,7 @@ contract Options {
     function fastForward() public {
         fakenow += 1 days;
     }
+
     /*** Testing ***/
 
     constructor() {
@@ -76,7 +77,7 @@ contract Options {
         stockPrice = randomWalkStock();
 
         for (uint i = 0; i < options.length; i++) {
-            option memory opt = options[i];
+            option storage opt = options[i];
             // calculatet the number of stocks the option is for
             opt.latestCost = calculateCostToExercise(opt);
         }
@@ -96,7 +97,7 @@ contract Options {
 
     // Purchase a call option, needs desired token, ID of option and payment
     function buyOption(uint ID) public payable {
-        option memory opt = options[ID];
+        option storage opt = options[ID];
 
         // check to see if this is a valid option
         require(!opt.canceled, "Option is canceled and cannot be bought");
@@ -107,12 +108,12 @@ contract Options {
         require(msg.value == opt.premium, "Incorrect amount of ETH sent for premium");
 
         //Transfer premium payment to writer
-        opt.writer.transfer(opt.premium);
+        opt.writer.transfer(msg.value);
         opt.buyer = payable(msg.sender);
     }
 
     function cancelOption(uint ID) public {
-        option memory opt = options[ID];
+        option storage opt = options[ID];
 
         require(opt.writer == msg.sender, "You do not own this option");
         require(!opt.canceled, "Option has already been canceled");
@@ -124,7 +125,7 @@ contract Options {
 
     // Exercise your call option, ID of option and payment
     function exercise(uint ID) public payable {
-        option memory opt = options[ID];
+        option storage opt = options[ID];
         // If not expired and not already exercised, allow option owner to exercise
         // To exercise, the strike value*amount equivalent paid to writer (from buyer) and amount of tokens in the contract paid to buyer
         require(opt.buyer == msg.sender, "You do not own this option");
