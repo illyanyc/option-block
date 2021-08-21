@@ -62,12 +62,16 @@ contract Options {
 
     constructor() {
         ethPrice = 3200;
-        stockPrice = 164;
+        stockPrice = 160;
     }
 
     function calculateCostToExercise(option memory opt) private view returns (uint) {
-        uint exerciseVal = opt.strike.mul(10 ** 10).div(opt.ethPriceAtTimeOfWrite.mul(10 ** 10)).mul(opt.amount);
-        return exerciseVal.div(ethPrice.mul(10 ** 10).div(stockPrice.mul(10 ** 10)));
+        // you have the option to buy *amount* eth worth of stocks at strike/ethPriceAtTimeOfWrite ratio
+        // calculate the num of stocks you can buy by amount * ethPriceAtTimeOfWrite / strike
+        uint exerciseVal = opt.amount.mul(opt.ethPriceAtTimeOfWrite).div(opt.strike);
+        // currently the exchange ratio is stockPrice/ethPrice
+        // in order to buy *exerciseVal* stocks, you need exerciseVal * stockPrice/ethPricek eth
+        return exerciseVal.mul(stockPrice).div(ethPrice);
     }
 
     // Returns the latest ETH price
@@ -131,7 +135,6 @@ contract Options {
         require(opt.buyer == msg.sender, "You do not own this option");
         require(!opt.exercised, "Option has already been exercised");
         require(!opt.canceled, "Option has already been canceled");
-        require(opt.expiry > fakenow, "Option is expired");
 
         //Buyer exercises option by paying strike*amount equivalent ETH value
         require(msg.value == opt.latestCost, "Incorrect amount sent to exercise");
