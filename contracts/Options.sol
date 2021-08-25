@@ -3,6 +3,8 @@
 pragma solidity ^0.8.0;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/SafeMath.sol";
+import "StockOracle.sol";
+
 
 contract Options {
     //Overflow safe operators
@@ -28,6 +30,29 @@ contract Options {
     uint public stockPrice;
 
     option[] public options;
+
+
+// --YH--
+
+    mapping (bytes4 => address) ticker_address;
+
+    function getTickerPrice (bytes4 _ticker) public view returns (uint256) {
+        //get the address of the contract
+        address _tickerAddress;
+        _tickerAddress = ticker_address[_ticker];
+        
+        // call the function from that contract 
+        StockMarket so = StockMarket(_tickerAddress);
+        return so.getStockPrice(_ticker);
+    }
+    
+    //Assign contract address to a ticker 
+    function setTickerAddress(bytes4 _ticker, address _tAddress) external {
+        ticker_address[_ticker] = _tAddress;
+    }
+
+//----
+
 
     /***
         For Testing Only
