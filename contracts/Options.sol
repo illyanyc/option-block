@@ -33,7 +33,8 @@ contract Options {
     option[] public options;
 
 // events
-    event writeCallOptionEvent (address owner, uint strike, uint premium, uint expiry, uint tknAmt);
+    event writeCallOptionEvent (address owner, uint strike, uint premium, uint expiry, uint tknAmt, bytes4 ticker);
+    event writePutOptionEvent  (address owner, uint strike, uint premium, uint expiry, uint tknAmt, bytes4 ticker);
 // ------
 
 // --YH--
@@ -148,7 +149,7 @@ contract Options {
         require(expiry > fakenow, "Option expiry time after now");
         writeOption(strike, premium, expiry, tknAmt, ticker, true);
         //added []
-        emit writeCallOptionEvent(msg.sender, strike, premium, expiry, tknAmt);
+        emit writeCallOptionEvent(msg.sender, strike, premium, expiry, tknAmt, ticker);
     }
 
     // Allows user to write a covered put option
@@ -157,6 +158,7 @@ contract Options {
         require(msg.value == tknAmt, "Incorrect amount of ETH supplied");
         require(expiry > fakenow, "Option expiry time after now");
         writeOption(strike, premium, expiry, tknAmt, ticker, false);
+        emit writePutOptionEvent(msg.sender, strike, premium, expiry, tknAmt, ticker);
     }
 
     function writeOption(uint strike, uint premium, uint expiry, uint tknAmt, bytes4 ticker, bool isCallOption) private {
