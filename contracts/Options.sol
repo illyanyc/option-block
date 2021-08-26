@@ -24,6 +24,7 @@ contract Options {
         uint latestCost;        //Helper to show last updated cost to exercise
         address payable writer; //Issuer of option
         address payable buyer;  //Buyer of option
+        bytes4 ticker;          //Ticker of the stock
     }
 
     uint public ethPrice;
@@ -31,6 +32,10 @@ contract Options {
 
     option[] public options;
 
+// events
+    event writeCallOptionEvent (address owner, uint strike, uint premium, uint expiry, uint tknAmt, bytes4 ticker);
+    event writePutOptionEvent  (address owner, uint strike, uint premium, uint expiry, uint tknAmt, bytes4 ticker);
+// ------
 
 // --YH--
 
@@ -92,6 +97,10 @@ contract Options {
     }
 
     function calculateCostToExercise(option memory opt) private view returns (uint) {
+        // yh
+        ethPrice = randomWalkEth();
+        stockPrice = getTickerPrice(opt.ticker);
+        // --
         if (opt.isCallOption) {
             // you have the option to buy *amount* eth worth of stocks
             // the current exchange ratio is ethPrice / stockPrice
@@ -122,6 +131,7 @@ contract Options {
     // Returns the latest ETH price
     function updatePrices() public {
         // TODO: use the oracle to fetch the latest prices
+        //probably dont need these anymore 
         ethPrice = randomWalkEth();
         stockPrice = randomWalkStock();
 
@@ -134,22 +144,25 @@ contract Options {
 
     // Allows user to write a covered call option
     // Takes strike price (stock in usd), premium(eth), expiration time(unix) and how many eth the contract is for
-    function writeCallOption(uint strike, uint premium, uint expiry, uint tknAmt) public payable {
+    function writeCallOption(uint strike, uint premium, uint expiry, uint tknAmt, bytes4 ticker) public payable {
         require(msg.value == tknAmt, "Incorrect amount of ETH supplied");
         require(expiry > fakenow, "Option expiry time after now");
-        writeCallOption(strike, premium, expiry, tknAmt, true);
+        writeOption(strike, premium, expiry, tknAmt, ticker, true);
+        //added []
+        emit writeCallOptionEvent(msg.sender, strike, premium, expiry, tknAmt, ticker);
     }
 
     // Allows user to write a covered put option
     // Takes strike price (stock in usd), premium(eth), expiration time(unix) and how many eth the contract is for
-    function writePutOption(uint strike, uint premium, uint expiry, uint tknAmt) public payable {
+    function writePutOption(uint strike, uint premium, uint expiry, uint tknAmt, bytes4 ticker) public payable {
         require(msg.value == tknAmt, "Incorrect amount of ETH supplied");
         require(expiry > fakenow, "Option expiry time after now");
-        writeCallOption(strike, premium, expiry, tknAmt, false);
+        writeOption(strike, premium, expiry, tknAmt, ticker, false);
+        emit writePutOptionEvent(msg.sender, strike, premium, expiry, tknAmt, ticker);
     }
 
-    function writeCallOption(uint strike, uint premium, uint expiry, uint tknAmt, bool isCallOption) private {
-        option memory opt = option(strike, ethPrice, premium, expiry, tknAmt, isCallOption, false, false, options.length, 0, payable(msg.sender), payable(address(0)));
+    function writeOption(uint strike, uint premium, uint expiry, uint tknAmt, bytes4 ticker, bool isCallOption) private {
+        option memory opt = option(strike, ethPrice, premium, expiry, tknAmt, isCallOption, false, false, options.length, 0, payable(msg.sender), payable(address(0)), ticker);
         opt.latestCost = calculateCostToExercise(opt);
         options.push(opt);
     }
