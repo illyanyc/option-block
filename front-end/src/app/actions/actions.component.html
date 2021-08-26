@@ -1,0 +1,13 @@
+<h5>Option Action</h5>
+
+<form [formGroup]="actionsForm" (ngSubmit)="submitForm()">
+  <div class="form-check" *ngFor="let opt of options; let i = index">
+    <input type="radio" class="form-check-input" formControlName="selected" [value]="i" />
+    <label class="form-check-label"> {{ opt }} </label>
+  </div>
+
+  <button type="submit" class="btn btn-secondary mt-3" [disabled]="!actionsForm.valid">
+    <!-- //[disabled]="!actionsForm.valid" submit button disabled if there is no input-->
+    NEXT
+  </button>
+</form>

@@ -1,0 +1,46 @@
+<nav class="navbar"> Current Balance:
+  <!-- want to import current balance, not sure how to do that yet -->
+</nav>
+<!-- navigation bar, just want to have current balance up here -->
+<div>
+  <section class="jumpotron bg-light text-center">
+    <h1>Option DEX</h1>
+    <p class="lead text-muted">
+      Powered by Blockchain
+    </p>
+  </section>
+  <!-- //header of website -->
+
+  <div class="d-flex">
+
+    <div class="container">
+      <app-ticker>tickermodule</app-ticker>
+    </div>
+    <!-- //ticker input -->
+
+    <div class="container">
+
+      <div class="block">
+        <app-call-block>Call Block
+          [call]="Block.type"
+          [ticker]="Block.ticker"
+          (click)="setactiveBlock(Block)"
+        </app-call-block>
+        <app-put-block>Put Block</app-put-block>
+      </div>
+    </div>
+    <!-- //call block -->
+
+    <div class="container">
+      <app-actions>Actions</app-actions>
+    </div>
+
+    <!-- Actions(legs) block -->
+
+    <div class="container">
+      <app-strike-prem-dep>SPM</app-strike-prem-dep>
+    </div>
+
+    <!-- Strike Premium Deposit block -->
+
+  </div>
