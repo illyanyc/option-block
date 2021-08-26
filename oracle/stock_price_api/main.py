@@ -14,7 +14,12 @@ def test():
 @app.route("/quote")
 def display_quote():
     symbol = request.args.get('symbol', default="SPY")
-    quote = Ticker(symbol).info['currentPrice']
+    tickerinfo = Ticker(symbol).info
+    try:
+        quote = tickerinfo['currentPrice']
+    except:
+        quote = tickerinfo['navPrice']
+        
     return jsonify({"close" : quote})
 
 if __name__ == '__main__':
