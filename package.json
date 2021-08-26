@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "bluebird": "^3.7.2",
+    "ethereumjs-tx": "^2.1.2",
+    "fetch": "^1.1.0",
+    "node-fetch": "^2.6.1",
+    "truffle-contract": "^4.0.31",
+    "web3": "^1.5.2"
+  }
+}

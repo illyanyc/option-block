@@ -1,37 +1,27 @@
 {
-  "name": "oracle-front",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.5.0",
-    "@testing-library/user-event": "^7.2.1",
-    "dotenv": "^8.2.0",
-    "nodemailer": "^6.4.11",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1",
-    "web3": "^1.2.9"
-  },
+  "name": "ethereum_oracle",
+  "version": "1.0.0",
+  "description": "This is an implementation of an Ethereum oracle using web3. An oracle is simply a messenger which relays data from one source to another, in this case a number is fetched from an API and this is relayed to a smart contract on the ethereum blockchain via the \"setNumber\" function in the sample smart contract.",
+  "main": "oracle.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "eslintConfig": {
-    "extends": "react-app"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ads365/Ethereum-Oracle.git"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ads365/Ethereum-Oracle/issues"
+  },
+  "homepage": "https://github.com/ads365/Ethereum-Oracle#readme",
+  "dependencies": {
+    "ethereumjs-tx": "^2.1.2",
+    "express": "^4.17.1",
+    "node-cron": "^2.0.3",
+    "node-fetch": "^2.6.1",
+    "web3": "^1.5.2"
   }
 }
