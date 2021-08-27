@@ -185,10 +185,21 @@ function sleep(ms){
 
 // Update oracles
 async function update_all_oracles(){
-	update_eth_oracle();
+
+	try {update_eth_oracle();
+	} catch (e) {
+		console.log('Failed updating ETHUSD Oracle');
+		logMyErrors(e); // pass exception object to error handler 
+	}
 	await sleep(30000);
+
 	for (let ticker in oracle_Contracts){
-		update_stock_oracle(ticker);
+
+		try {update_stock_oracle(ticker);
+		} catch (e) {
+			console.log('Failed updating '.concat(ticker).concat(' Oracle'));
+			logMyErrors(e); // pass exception object to error handler
+		}
 		await sleep(100000);
 	}
 }
@@ -207,6 +218,7 @@ app = express();
 // | | hour
 // | minute
 // second ( optional )
+
 
 // Run Cron job
 cron.schedule('*/20 * * * *', function() {
