@@ -7,6 +7,7 @@ const ropstenUrl = "https://ropsten.infura.io/v3/3f34a28b73f547a2ac6f9e3afc8e3b6
 const account1 = '0xc2ABe24A0eca57B29e0E229f030e3b2C32aEcb4E' // Your account address 1
 const privateKey1 = Buffer.from('1e90884d56f3c312e39e2faae57478c6d5f0185f2fd6778b0f7ae197926741f6', 'hex');
 
+// Set stock price oracle addresses
 var oracle_Contracts = {
 'AAPL':	'0x57960D9E1244deB9181BdC2a6B34968718fed1A4',
 'GOOGL':'0xBC32E17e2a72F6e97Aa0cA70FfCE9E951E6ef30c',
@@ -16,9 +17,10 @@ var oracle_Contracts = {
 'NVDA':	'0x9Bc082c47B2Cd671B633C86BCF3b53f577968bB9',
 'TSLA':	'0xD3DF5bEaA0C0D89dC4156870b6913C7EA8F74c23'
 }
-
+// Set ETH price oracle address
 const ETHUSD = "0x7744b083407c57E8DDCd32396699A7D8C6cc305a";
 
+// Set contract ABI
 const abi = [
 	{
 		"constant": false,
@@ -154,27 +156,31 @@ async function sendTx(contract_Address, Close) {
 	// Instantiate contract
 	const myContract = new web3.eth.Contract(abi, contract_Address);
 
+	// Encode new data into contract
     const myData = myContract.methods.setClose(Close).encodeABI();
 
+	// Get transaction count (nonce)
     web3.eth.getTransactionCount(account1, (err, txCount) => {
 
-    // Build the transaction
-    const txObject = {
-        nonce:    web3.utils.toHex(txCount),
-        to:       contract_Address,
-        value:    web3.utils.toHex(web3.utils.toWei('0', 'ether')),
-        gasLimit: web3.utils.toHex(2100000),
-        gasPrice: web3.utils.toHex(web3.utils.toWei('6', 'gwei')),
-        data: myData  
-    }
+    	// Build the transaction
+		const txObject = {
+			nonce:    web3.utils.toHex(txCount),
+			to:       contract_Address,
+			value:    web3.utils.toHex(web3.utils.toWei('0', 'ether')),
+			gasLimit: web3.utils.toHex(2100000),
+			gasPrice: web3.utils.toHex(web3.utils.toWei('6', 'gwei')),
+			data: myData  
+    	}
+
         // Sign the transaction
         const tx = new Tx.Transaction(txObject, {chain:'ropsten', hardfork: 'petersburg'});
         tx.sign(privateKey1);
 
+		// Encode transaction
         const serializedTx = tx.serialize();
         const raw = '0x' + serializedTx.toString('hex');
 
-        // Broadcast the transaction
+        // Broadcast transaction
         const transaction = web3.eth.sendSignedTransaction(raw); 
     });
 }
@@ -186,20 +192,33 @@ function sleep(ms){
 // Update oracles
 async function update_all_oracles(){
 
-	try {update_eth_oracle();
+	// Update Ethereum oracle
+	try {
+		update_eth_oracle();
+	
+	  // Catch errors
 	} catch (e) {
-		console.log('Failed updating ETHUSD Oracle');
+		console.log('Failed updating ETHUSD Oracle'); // Print error to console
 		logMyErrors(e); // pass exception object to error handler 
 	}
+
+	// Wait for transaction to be broadcasted to blockchain 
 	await sleep(30000);
 
+	// Iterate over tickers
 	for (let ticker in oracle_Contracts){
 
-		try {update_stock_oracle(ticker);
+		// Update stock oracles
+		try {
+			update_stock_oracle(ticker);
+
+		  // Catch errors
 		} catch (e) {
-			console.log('Failed updating '.concat(ticker).concat(' Oracle'));
+			console.log('Failed updating '.concat(ticker).concat(' Oracle')); // Print error to console
 			logMyErrors(e); // pass exception object to error handler
 		}
+
+		// Wait for transaction to be broadcasted to blockchain 
 		await sleep(100000);
 	}
 }
@@ -218,7 +237,6 @@ app = express();
 // | | hour
 // | minute
 // second ( optional )
-
 
 // Run Cron job
 cron.schedule('*/20 * * * *', function() {
