@@ -12,26 +12,26 @@ const dApp = {
     return false;
   },
 
-  
+
     writeOptions: async function() {
         const strike = 15000;
         const premium = 10000000000;
         const expiry = 1661705355;
-        const tknAmt = 100000000000000000000;
-        const ticker = AAPL;
+        const tknAmt = 1000000000000000;
+        const ticker = "AAPL";
 
-  
 
-        // this.contract.methods.writeCallOption(strike, premium, expiry, tknAmt, ticker).send({from: this.accounts[0], value : tnkAmt, gas: 1500000, gasPrice: '30000000000000'}).on("receipt", (receipt) => {
-        //     M.toast({ html: "Transaction Mined! Refreshing UI..." });
-        //     location.reload();
-        //   });
+
+        this.contract.methods.writeCallOption(strike, premium, expiry, tknAmt, ticker).send({from: this.accounts[0], value : tknAmt}).on("receipt", (receipt) => {
+            M.toast({ html: "Transaction Mined! Refreshing UI..." });
+            location.reload();
+          });
 
         // Encode new data into contract
-        this.contract.methods.writeCallOption(strike, premium, expiry, tknAmt, ticker).encodeABI().send({from: this.accounts[0], value : window.web3.toWei(0.01, "ether"), gas: 1500000, gasPrice: '30000000000000'});
-  
-    }, 
-  
+        // this.contract.methods.writeCallOption(strike, premium, expiry, tknAmt, ticker).encodeABI().send({from: this.accounts[0], value : window.web3.toWei(0.01, "ether"), gas: 1500000, gasPrice: '30000000000000'});
+
+    },
+
   main: async function() {
     // Initialize web3
     if (!this.ethEnabled()) {
