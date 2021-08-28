@@ -76,12 +76,12 @@ URl : <code>/option_bs/symbol/price/strike/mat_date/rf/call_put_flag</code>
 
 Where:
 
-*symbol* = stock ticker
-*price* = stock price, where stock price multipled by 100 (ex. 145.20 = 14520)
-*strike* = strike price, where stike price multipled by 100 (ex. 145.20 = 14520)
-*mat_date* = maturity date (YYYY-MM-DD)
-*rf* = risk free rate in basis points (ex. 0.25% = 25)
-*call_put_flag* = for call pass "c", for put pass "p"
+*symbol* = stock ticker <br>
+*price* = stock price, where stock price multipled by 100 (ex. 145.20 = 14520) <br>
+*strike* = strike price, where stike price multipled by 100 (ex. 145.20 = 14520) <br>
+*mat_date* = maturity date (YYYY-MM-DD) <br>
+*rf* = risk free rate in basis points (ex. 0.25% = 25) <br>
+*call_put_flag* = for call pass "c", for put pass "p" <br>
 
 ### Option premium - Market Data
 
@@ -89,10 +89,10 @@ URl : <code>/option_yf/symbol/strike/mat_date/call_put_flag</code>
 
 Where:
 
-*symbol* = stock ticker
-*strike* = strike price, where stike price multipled by 100 (ex. 145.20 = 14520)
-*mat_date* = maturity date (YYYY-MM-DD)
-*call_put_flag* = for call pass "c", for put pass "p"
+*symbol* = stock ticker <br>
+*strike* = strike price, where stike price multipled by 100 (ex. 145.20 = 14520) <br>
+*mat_date* = maturity date (YYYY-MM-DD) <br>
+*call_put_flag* = for call pass "c", for put pass "p" <br>
 
     
     
