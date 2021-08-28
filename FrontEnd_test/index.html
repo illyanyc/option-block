@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>CryptoRight</title>
+  <!-- Let browser know website is optimized for mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <!-- Compiled and minified Materialize CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" integrity="sha256-OweaP/Ic6rsV+lysfyS4h+LM6sRwuO3euTYfr6M124g=" crossorigin="anonymous" />
+  <!-- FontAwesome icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous" />
+</head>
+
+<body class="grey lighten-3">
+
+  <div class="container">
+
+    <h4>CryptoRight Blockchain Copyright System</h4>
+    <p>Welcome to the CryptoRight portal! Using this interface, you can explore and create new proprietary copyrights and open source material, all stored permanently on Ethereum and IPFS.</p>
+
+    <hr />
+
+    <h5>Open Source Material</h5>
+    <ul id="dapp-opensource" class="collapsible"></ul>
+
+    <h5>Proprietary Copyrights</h5>
+    <ul id="dapp-copyrights" class="collapsible"></ul>
+
+    <div class="card-action">
+        <a id="dapp-copyright" href="#" onclick="dApp.writeOptions()">Write Option</a>
+    </div>
+    
+
+
+
+  <!-- JQuery 3.4.1 slim minified -->
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=" crossorigin="anonymous"></script>
+  <!-- Compiled and minified JavaScript for Materialize CSS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js" integrity="sha256-U/cHDMTIHCeMcvehBv1xQ052bPSbJtbuiw4QA9cTKz0=" crossorigin="anonymous"></script>
+  <!-- Web3.js -->
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.2.5-rc.0/dist/web3.min.js" integrity="sha256-ZjUHyLZZWkQPbWfRjTSmGtfcTSOermVT6f/CvJW2RY4=" crossorigin="anonymous"></script>
+  <!-- Materialize Init -->
+  <script>
+    $(document).ready(function(){
+      $('.collapsible').collapsible();
+    });
+  </script>
+  <!-- dApp JavaScript -->
+  <script src="dapp.js"></script>
+
+</body>
+</html>
