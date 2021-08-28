@@ -1,3 +1,33 @@
-<h5>Strike, Premium, Deposit</h5>
+<h5>Build Contract </h5>
 
+<form [formGroup]="contractForm" (ngSubmit)="submitContract()" class="container col-sm-4">
+  <!-- // formGroup initializes the capturing of the form data for the ticker -->
+  <!-- (ngSubmit)="submitTicker" for console log which can be founnd in the .compenent.ts file-->
 
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label col-form-label-sm">
+      # of Contracts
+    </label>
+    <input formControlName="ContractNum" type="text" class="form-control" placeholder="10" />
+
+    <label class="col-sm-2 col-form-label col-form-label-sm">
+      Collateral
+    </label>
+    <input formControlName="Collateral" type="text" class="form-control" placeholder="100" />
+
+    <label class="col-sm-2 col-form-label col-form-label-sm">
+      Strike
+    </label>
+    <input formControlName="Strike" type="text" class="form-control" placeholder="150" />
+
+    <label class="col-sm-2 col-form-label col-form-label-sm">
+      Expiration
+    </label>
+    <input formControlName="Expiration" type="text" class="form-control" placeholder="09/30/2021" />
+  </div>
+
+  <div class="d-flex justify-content-center">
+    <button type="submit" class="btn btn-secondary mt-3">Submit</button>
+  </div>
+
+</form>

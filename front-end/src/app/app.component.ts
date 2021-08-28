@@ -16,8 +16,6 @@ export class AppComponent {
     // these are the blocks that stack on top of each other Call & Put
     { ID: 'CALL', ticker: "AAPL", }, { ID: "PUT", ticker: "AAPL", }];
 
-  setactiveBlock(blocks) {
-    this.activeBlock = blocks;
+  // setactiveBlock(blocks) {
+  //   this.activeBlock = blocks;
   }
-
-}

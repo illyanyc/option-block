@@ -6,7 +6,7 @@
   <section class="jumpotron bg-light text-center">
     <h1>Option DEX</h1>
     <p class="lead text-muted">
-      Powered by Blockchain
+      Powered by the Blockchain
     </p>
   </section>
   <!-- //header of website -->
@@ -22,9 +22,7 @@
 
       <div class="block">
         <app-call-block>Call Block
-          [call]="Block.type"
-          [ticker]="Block.ticker"
-          (click)="setactiveBlock(Block)"
+
         </app-call-block>
         <app-put-block>Put Block</app-put-block>
       </div>
@@ -38,9 +36,15 @@
     <!-- Actions(legs) block -->
 
     <div class="container">
-      <app-strike-prem-dep>SPM</app-strike-prem-dep>
+      <app-strike-prem-dep># of Contracts, Collateral, Strike, Expiration</app-strike-prem-dep>
     </div>
 
-    <!-- Strike Premium Deposit block -->
+    <!-- Build of Contact -->
 
   </div>
+  <section class="jumpotron bg-light text-center">
+    <h5>Option Chain Information</h5>
+    <app-tickerfeed></app-tickerfeed>
+  </section>
+
+  <div></div>
