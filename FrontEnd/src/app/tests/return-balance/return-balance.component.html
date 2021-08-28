@@ -1,0 +1,37 @@
+<div class="row text-center">
+    <div class = "col-md-4" style="padding-bottom: 30px">
+        <div class="card h-100">
+            <a class="text-decoration-none">
+                
+            </a>
+            <div class="card-body">
+                <h4 class="card-title">My Account</h4>
+                <p>Balance</p>
+                <div><h4>{{balances.balance}}</h4></div>
+            </div>
+        </div>
+
+        <div class="card h-100">
+            <a class="text-decoration-none">                
+            </a>
+            <div class="card-body">
+                <h4 class="card-title">My Account</h4>
+                <p>Deposit</p>
+                <form novalidate (ngSubmit) = "setDeposit()" [formGroup]="dataForm">
+                    <div class="form-group">
+                        <label for ="account_eth">Account</label>:
+                        <input class="form-control" id="account_eth" type="text" placeholder="i.e 0x...." formControlName="account_eth"/>
+                        <button class="btn btn-info" id="set" type="submit">Deposit</button>
+                        <h3>{{hash.confirmation}}</h3>
+                        
+                    </div>
+                </form>
+                
+            </div>
+            <div class="card-footer">
+                
+            </div>
+        </div>
+    
+    </div>
+</div>
