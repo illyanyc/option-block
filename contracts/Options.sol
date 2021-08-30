@@ -5,7 +5,6 @@ pragma solidity ^0.8.0;
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/SafeMath.sol";
 import "./TickerPriceGetter.sol";
 
-
 contract Options {
     //Overflow safe operators
     using SafeMath for uint;
@@ -15,14 +14,14 @@ contract Options {
         uint strike;               //Price in USD option
         uint ethPriceAtTimeOfWrite;//Eth Price in USD at time of write
         uint premium;              //Fee in contract token that option writer charges
-        uint shares                //Number of shares in the option
+        uint shares;                //Number of shares in the option
         uint expiry;               //Unix timestamp of expiration time
         uint amount;               //Amount of tokens the option contract is for
         bool isCallOption;         //Is this a call option
         bool exercised;            //Has option been exercised
         bool canceled;             //Has option been canceled
         uint id;                   //Unique ID of option, also array index
-        // uint latestCost;           //Helper to show last updated cost to exercise
+        uint latestValue;           //Helper to show last updated value
         address payable writer;    //Issuer of option
         address payable buyer;     //Buyer of option
         string ticker;             //Ticker of the stock
@@ -33,8 +32,8 @@ contract Options {
     option[] public options;
 
 // events
-    event writeCallOptionEvent (address owner, uint strike, uint, shares, uint premium, uint expiry, uint tknAmt, string ticker);
-    event writePutOptionEvent  (address owner, uint strike, uint shares, uint premium, uint expiry, uint tknAmt, string ticker);
+    event writeCallOptionEvent (address owner, uint strike, uint premium, uint shares, uint expiry, uint tknAmt, string ticker);
+    event writePutOptionEvent  (address owner, uint strike, uint premium, uint shares, uint expiry, uint tknAmt, string ticker);
 // ------
 
     constructor() {
@@ -48,7 +47,7 @@ contract Options {
             option storage opt = options[i];
             uint stockPrice = priceGetter.getTickerPrice(opt.ticker);
             // calculatet the number of stocks the option is for
-            opt.latestCost = calculateCostToExercise(stockPrice, ethPrice, opt.strike, opt.shares, opt.ethPriceAtTimeOfWrite, opt.amount, opt.isCallOption);
+            opt.latestValue = calculateOptionValue(stockPrice, ethPrice, opt.strike, opt.shares, opt.amount, opt.isCallOption);
         }
     }
 
@@ -58,8 +57,11 @@ contract Options {
     function writeCallOption(uint strike, uint premium, uint shares, uint expiry, uint tknAmt, string memory ticker) public payable {
         require(msg.value == tknAmt, "Incorrect amount of ETH supplied");
         require(expiry > block.timestamp, "Option expiry time after now");
+        require(strike > 0, "Strike price must be > $0");
+        require(premium > 0, "Premium must be > $0");
+        require(shares > 0, "Shares must be > 0");
+        require(tknAmt > 0, "Token amount must be > 0");
         writeOption(strike, premium, shares, expiry, tknAmt, ticker, true);
-        //added []
         emit writeCallOptionEvent(msg.sender, strike, premium, shares, expiry, tknAmt, ticker);
     }
 
@@ -69,28 +71,13 @@ contract Options {
     function writePutOption(uint strike, uint premium, uint shares, uint expiry, uint tknAmt, string memory ticker) public payable {
         require(msg.value == tknAmt, "Incorrect amount of ETH supplied");
         require(expiry > block.timestamp, "Option expiry time after now");
+        require(strike > 0, "Strike price must be > $0");
+        require(premium > 0, "Premium must be > $0");
+        require(shares > 0, "Shares must be > 0");
+        require(tknAmt > 0, "Token amount must be > 0");
         writeOption(strike, premium, shares, expiry, tknAmt, ticker, false);
         emit writePutOptionEvent(msg.sender, strike, premium, shares, expiry, tknAmt, ticker);
     }
-
-    // function writeOption(uint strike, uint premium, uint expiry, uint tknAmt, string memory ticker, bool isCallOption) private {
-    //     uint ethPrice = priceGetter.getTickerPrice(ethSymbol);
-    //     uint stockPrice = priceGetter.getTickerPrice(ticker);
-    //     option memory opt = option(strike,
-    //                                ethPrice,
-    //                                premium,
-    //                                expiry,
-    //                                tknAmt,
-    //                                isCallOption,
-    //                                false,
-    //                                false,
-    //                                options.length,
-    //                                calculateCostToExercise(stockPrice, ethPrice, strike, ethPrice, tknAmt, isCallOption),
-    //                                payable(msg.sender),
-    //                                payable(address(0)),
-    //                                ticker);
-    //     options.push(opt);
-    // }
 
     function writeOption(uint strike, uint premium, uint shares, uint expiry, uint tknAmt, string memory ticker, bool isCallOption) private {
         uint ethPrice = priceGetter.getTickerPrice(ethSymbol);
@@ -106,7 +93,7 @@ contract Options {
                                    false,
                                    false,
                                    options.length,
-                                //    calculateCostToExercise(stockPrice, ethPrice, strike, shares, ethPrice, tknAmt, isCallOption),
+                                   calculateOptionValue(stockPrice, ethPrice, strike, shares, tknAmt, isCallOption),
                                    payable(msg.sender),
                                    payable(address(0)),
                                    ticker);
@@ -155,48 +142,27 @@ contract Options {
         require(!opt.canceled, "Option has already been canceled");
 
         //Buyer exercises option by paying strike*amount equivalent ETH value
-        require(msg.value == opt.latestCost, "Incorrect amount sent to exercise");
+        require(opt.latestValue > 0, "The option contract is worthless");
         //Pay writer the exercise cost
-        opt.writer.transfer(opt.latestCost);
+        opt.writer.transfer(opt.latestValue);
         //Pay buyer contract amount of ETH
         payable(msg.sender).transfer(opt.amount);
         opt.exercised = true;
     }
 
-    function calculateOptionValue(uint stockPrice, uint ethPrice, uint strike, uint shares, uint ethPriceAtTimeOfWrite, uint amount, bool isCallOption) private pure returns (int) {
+    function calculateOptionValue(uint stockPrice, uint ethPrice, uint strike, uint shares, uint amount, bool isCallOption) private pure returns (uint) {
         if (isCallOption) {
-            // you have the option to buy *amount* eth worth of stocks
-            // the current exchange ratio is ethPrice / stockPrice
-            // the num of stocks you can buy is amount * ethPrice / stockPrice
-            // e.g amount = 10 ether, ethPrice = 3200, stock = 160
-            // exerciseVal = 200, meaning that you can buy 200 stocks with 10 eth
+            
+            uint positionValueUSD = stockPrice.mul(shares).sub(strike.mul(shares));
+            uint exerciseValWei = positionValueUSD.div(ethPrice).mul(10**18);
 
-            uint positionValueUSD = stockPrice.mul(shares).sub(strikePrice.mul(shares));
-            // uint exerciseVal = amount.mul(ethPrice);
-            uint exerciseValWei = positionValueUSD.div(ethPrice).mul(10**18)
-
-            // at time of write - the exchange ratio is ethPriceAtTimeOfWrite/strikePrice
-            // *exerciseVal* stocks would cost exerciseVal * strike/ethPriceAtTimeOfWrite eth
-            // e.g. exerciseVal = 200, ethPriceAtTimeOfWrite = 3200, strike = 80
-            // you need 5 eth
-            // return exerciseValWei.mul(strike).div(ethPriceAtTimeOfWrite);
             return exerciseValWei;
         } else {
-            // you have the option to sell stocks for *amount* of eth
-            // the ratio at time of write is ethPriceAtTimeOfWrite/strikePrice
-            // the num of stocks you can sell is amount * ethPriceAtTimeOfWrite / strike
-            // e.g amount = 10 ether, ethPriceAtTimeOfWrite = 3200, strike = 160
-            // exerciseVal = 200, meaning that you can sell 200 stocks for 10 eth
             
-            uint positionValueUSD = strikePrice.mul(shares).sub(stockPrice.mul(shares));
-            // uint exerciseVal = amount.mul(ethPriceAtTimeOfWrite).div(strike).mul(shares);
-            uint exerciseValWei = positionValueUSD.div(ethPrice).mul(10**18)
+            uint positionValueUSD = strike.mul(shares).sub(stockPrice.mul(shares));
+            uint exerciseValWei = positionValueUSD.div(ethPrice).mul(10**18);
 
-            // currently the exchange ratio is ethPrice/stockPrice
-            // in order to sell *exerciseVal* stocks, you need exerciseVal * stockPrice/ethPricek eth
-            // e.g. exerciseVal = 200, ethPrice = 3200, stockPrice = 80
-            // you need 5 eth
-            return exerciseValWei
+            return exerciseValWei;
         }
     }
 }
