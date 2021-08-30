@@ -16,25 +16,48 @@
 
   <div class="container">
 
-    <h4>CryptoRight Blockchain Copyright System</h4>
-    <p>Welcome to the CryptoRight portal! Using this interface, you can explore and create new proprietary copyrights and open source material, all stored permanently on Ethereum and IPFS.</p>
-
+    <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&width=1000&height=200&section=header&text=Option-Block&fontSize=30&fontColor=black">
     <hr />
 
-    <h5>Open Source Material</h5>
-    <ul id="dapp-opensource" class="collapsible"></ul>
+    <!--Write Option-->
+    strike : <input type="number" name="strike" id="strike"><br>
+    premium : <input type="number" name="premium" id="premium"><br> 
+    shares : <input type="number" name="shares" id="shares"><br>
+    expiry : <input type="number" name="expiry" id="expiry"><br>
+    tknAmt : <input type="number" name="tknAmt" id="tknAmt"><br>
+    ticker : <input type="text" name="ticker_opt" id="ticker_opt"><br>
 
-    <h5>Proprietary Copyrights</h5>
-    <ul id="dapp-copyrights" class="collapsible"></ul>
+    <script>
+      function WriteOption(){
+        var strike = document.getElementById('strike').value;
+        var premium = document.getElementById('premium').value;
+        var shares = document.getElementById('shares').value; 
+        var expiry = document.getElementById('expiry').value;
+        var tknAmt = document.getElementById('tknAmt').value;
+        var ticker = document.getElementById('ticker_opt').value;
 
+        dApp.writeOptions(strike, premium, shares, expiry, tknAmt, ticker)}
+    </script>
     <div class="card-action">
-        <a id="dapp-copyright" href="#" onclick="dApp.writeOptions()">Write Option</a>
+        <a id="dapp-write-option" href="#" onclick="WriteOption()">Write Option</a>
     </div>
 
+    <!--Get Eth Price-->
     <div class="card-action">
-      <a id="dapp-copyright" href="#" onclick="dApp.ethPrice()">Get Eth Price</a>
-  </div>
-    
+      <a id="dapp-get-eth-price" href="#" onclick="dApp.getEthPrice()">Get Eth Price</a>
+    </div>
+
+    <!--Get Stock Price-->
+    <script>
+      function StockPrice(){
+        dApp.getStockPrice(document.getElementById('stock_ticker').value)
+        }
+      </script>
+    <input type="text" name="ticker" id="stock_ticker"><br> 
+    <div class="card-action">
+      <a id="dapp-get-stock-price" href="#" onclick="StockPrice()">Get Stock Price</a>
+    </div>
+   
 
 
 

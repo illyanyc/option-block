@@ -132,4 +132,5 @@ dmypy.json
 # Node packages
 /node_modules
 /oracle/node_modules
+/FrontEnd/node_modules
 
