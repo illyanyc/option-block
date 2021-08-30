@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from yfinance import Ticker
+import quandl
 from scipy.stats import norm
 from math import log, sqrt, exp
 from datetime import datetime
@@ -27,17 +28,16 @@ def display_quote():
     quote = round(Ticker(symbol).history(period="1d")["Close"].values[0],2)
     return jsonify({"close" : quote})
 
-@app.route("/option_bs/<symbol>/<price>/<strike>/<mat_date>/<rf>/<call_put_flag>")
+@app.route("/option_bs/<symbol>/<price>/<strike>/<mat_date>/<call_put_flag>")
 def BlackScholes(symbol : str,
                  price : int,
                  strike : int,
                  mat_date : str, #ex: ''
-                 rf : int,
                  call_put_flag : str = "c" or "p"):
     '''Returns option premium based on Black Scholes equation
     https://www.cs.princeton.edu/courses/archive/fall09/cos323/papers/black_scholes73.pdf
     
-    URL format : /option_bs/<symbol>/<price>/<strike>/<mat_date>/<rf>/<call_put_flag>
+    URL format : /option_bs/<symbol>/<price>/<strike>/<mat_date>/<call_put_flag>
     '''
         
     # Get data
@@ -46,13 +46,18 @@ def BlackScholes(symbol : str,
     vol = ticker.history(period="1Y")["Close"].std()
     div = ticker.info["dividendRate"]
     
+    try:
+        rf = quandl.get("FRED/DGS10").iloc[-1].Value
+    except:
+        rf = 1.5
+    
     if div is None:
         div = 0.0
         
     mat_time = ((datetime.strptime(mat_date, '%Y-%m-%d') - datetime.now()).days) / 365
 
     # Convert to fraction
-    rf = int(rf) / 10000
+    rf = int(rf) / 100
     vol = vol / 100
     div = div / 100
     strike = int(strike) / 100
