@@ -12,10 +12,14 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous" />
   <!--Custom stylesheet-->
   <link rel="stylesheet" href="style.css" />
+  <!-- Added Bootstrap for styling -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
   <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
-  <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>  
+  <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
 </head>
+
 
 <body class="grey lighten-3">
 
@@ -23,6 +27,97 @@
 
     <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&width=1000&height=200&section=header&text=Option-Block&fontSize=30&fontColor=black">
     <hr />
+<!-- This is for the Portfolio Banner -->
+    <div class="container">
+        <h5 style="text-align: center;">Your Portfolio</h5>
+  
+        <style>
+          table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+          }
+          
+          td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+          }
+          
+          tr:nth-child(even) {
+            background-color: #dddddd;}
+
+          </style>
+          </head>
+          <body>
+          
+          <table>
+            <tr>
+              <th>Address</th>
+              <th>Ticker</th>
+              <th>Strike</th>
+              <th>Premium Paid</th>
+              <th>Contract_ID</th>
+              <th>Contract Value</th>
+
+            </tr>
+            <tr>
+              <td>x0000</td>
+              <td>AAPL</td>
+              <td>$160.00</td>
+              <td>4500</td>
+              <td>1</td>
+              <td>5000</td>
+              <td><button type="button" class="btn btn-success">Exercise</button><button type="button" class="btn btn-danger">Sell</td>
+            </tr>
+            <tr>
+              <td>x0000</td>
+              <td>AAPL</td>
+              <td>$160.00</td>
+              <td>4500</td>
+              <td>1</td>
+              <td>5000</td>
+              <td><button type="button" class="btn btn-success">Exercise</button><button type="button" class="btn btn-danger">Sell</td>
+            </tr>
+            <tr>
+              <td>x0000</td>
+              <td>AAPL</td>
+              <td>$160.00</td>
+              <td>4500</td>
+              <td>1</td>
+              <td>5000</td>
+              <td><button type="button" class="btn btn-success">Exercise</button><button type="button" class="btn btn-danger">Sell</td>
+            </tr>
+            <tr>
+              <td>x0000</td>
+              <td>AAPL</td>
+              <td>$160.00</td>
+              <td>4500</td>
+              <td>1</td>
+              <td>5000</td>
+              <td><button type="button" class="btn btn-success">Exercise</button><button type="button" class="btn btn-danger">Sell</td>
+            </tr>
+            <tr>
+              <td>x0000</td>
+              <td>AAPL</td>
+              <td>$160.00</td>
+              <td>4500</td>
+              <td>1</td>
+              <td>5000</td>
+              <td><button type="button" class="btn btn-success">Exercise</button><button type="button" class="btn btn-danger">Sell</td>
+            </tr>
+            <tr>
+              <td>x0000</td>
+              <td>AAPL</td>
+              <td>$160.00</td>
+              <td>4500</td>
+              <td>1</td>
+              <td>5000</td>
+              <td><button type="button" class="btn btn-success">Exercise</button><button type="button" class="btn btn-danger">Sell</td>
+            </tr>
+          </table>
+      </div>
+    </div>
 
     <div class="float-container">
       <div class="float-child">
@@ -69,8 +164,83 @@
         </div>
       </div>
 
-      <div class="float-child">
-        <h5>View Optionbook</h5> 
+      <!-- Open Orderbook -->
+      <div class="container">
+        <h5 style="text-align: center;">Open Orderbook</h5>
+  
+        <style>
+          table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+          }
+          
+          td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+          }
+          
+          tr:nth-child(even) {
+            background-color: #dddddd;}
+
+          
+          </style>
+          </head>
+          <body>
+          
+          
+          <table>
+            <tr>
+              <th>Address</th>
+              <th>Ticker</th>
+              <th>Premium</th>
+              <th>Contract_ID</th>
+            </tr>
+            <tr>
+              <td>x0000</td>
+              <td>AAPL</td>
+              <td>3500</td>
+              <td>1</td>
+              <td><button type="button" class="btn btn-primary">Buy</button></td>
+            </tr>
+            <tr>
+              <td>x0000</td>
+              <td>AAPL</td>
+              <td>3500</td>
+              <td>2</td>
+              <td><button type="button" class="btn btn-primary" style="text-align: right;">Buy</button></td>
+            </tr>
+            <tr>
+              <td>x0000</td>
+              <td>AAPL</td>
+              <td>3500</td>
+              <td>3</td>
+              <td><button type="button" class="btn btn-primary" style="text-align: right;">Buy</button></td>
+            </tr>
+            <tr>
+              <td>x0000</td>
+              <td>AAPL</td>
+              <td>3500</td>
+              <td>4</td>
+              <td><button type="button" class="btn btn-primary" style="text-align: right;">Buy</button></td>
+            </tr>
+            <tr>
+              <td>x0000</td>
+              <td>AAPL</td>
+              <td>3500</td>
+              <td>5</td>
+              <td><button type="button" class="btn btn-primary" style="text-align: right;">Buy</button></td>
+            </tr>
+            <tr>
+              <td>x0000</td>
+              <td>AAPL</td>
+              <td>3500</td>
+              <td>6</td>
+              <td><button type="button" class="btn btn-primary" style="text-align: right;">Buy</button></td>
+            </tr>
+          </table>
+        </div>
       </div>
     </div>
    
