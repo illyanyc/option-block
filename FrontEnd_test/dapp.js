@@ -1,5 +1,6 @@
+
 // Change this address to match your deployed contract!
-const contract_address = "0xAdaE22849912d42C62246b7cCc71b8eF21e0aFfc";
+const contract_address = "0x14122EB49a71D2d4a3e373d861eF3459b25f0Dd4";
 
 var oracle_Contracts = {
 'AAPL':	'0x57960D9E1244deB9181BdC2a6B34968718fed1A4',
@@ -42,10 +43,11 @@ const dApp = {
 
   // Gets ETH price from ETH oracle
   getEthPrice: async function(){
-    eth_price = this.ethOracle.methods.getClose().send({from: this.accounts[0]}).on("receipt", (receipt) => {
-      M.toast({ html: "ETH price retrieved." })      
-      });
-    EthPrice = eth_price;
+    EthPrice = await this.ethOracle.methods.getClose().call();
+    var message = "ETHUSD : $".concat(EthPrice/100);
+    console.log(message);
+    M.toast({ html: message })
+    
   },
 
   // Gets stock price from stock oracle
@@ -58,9 +60,10 @@ const dApp = {
       { defaultAccount: this.accounts[0] }
     );
 
-    stockPrice = this.stockOracle.methods.getClose().send({from: this.accounts[0]}).on("receipt", (receipt) => {
-      M.toast({ html: "Stock price of {} : {}".format(ticker, String(receipt)) })      
-      });
+    stockPrice = await this.stockOracle.methods.getClose().call();
+    var message = ticker.concat(" : $").concat(stockPrice/100);
+    console.log(message);
+    M.toast({ html: message })    
   },
 
   main: async function() {

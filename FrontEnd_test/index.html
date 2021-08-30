@@ -3,13 +3,18 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>CryptoRight</title>
+  <title>Option-Block</title>
   <!-- Let browser know website is optimized for mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <!-- Compiled and minified Materialize CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" integrity="sha256-OweaP/Ic6rsV+lysfyS4h+LM6sRwuO3euTYfr6M124g=" crossorigin="anonymous" />
   <!-- FontAwesome icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous" />
+  <!--Custom stylesheet-->
+  <link rel="stylesheet" href="style.css" />
+
+  <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+  <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>  
 </head>
 
 <body class="grey lighten-3">
@@ -19,43 +24,54 @@
     <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&width=1000&height=200&section=header&text=Option-Block&fontSize=30&fontColor=black">
     <hr />
 
-    <!--Write Option-->
-    strike : <input type="number" name="strike" id="strike"><br>
-    premium : <input type="number" name="premium" id="premium"><br> 
-    shares : <input type="number" name="shares" id="shares"><br>
-    expiry : <input type="number" name="expiry" id="expiry"><br>
-    tknAmt : <input type="number" name="tknAmt" id="tknAmt"><br>
-    ticker : <input type="text" name="ticker_opt" id="ticker_opt"><br>
+    <div class="float-container">
+      <div class="float-child">
+        <h5>Write Options</h5>
+        <!--Write Option-->
 
-    <script>
-      function WriteOption(){
-        var strike = document.getElementById('strike').value;
-        var premium = document.getElementById('premium').value;
-        var shares = document.getElementById('shares').value; 
-        var expiry = document.getElementById('expiry').value;
-        var tknAmt = document.getElementById('tknAmt').value;
-        var ticker = document.getElementById('ticker_opt').value;
+        Call or Put : <input type="checkbox" checked data-toggle="toggle" data-on="Call" data-off="Put" data-onstyle="success" data-offstyle="danger"><br>
+        Ticker : <input type="text" name="ticker_opt" id="ticker_opt"><br>
+        Strike : <input type="number" name="strike" id="strike"><br>
+        Premium : <input type="number" name="premium" id="premium"><br> 
+        Shares : <input type="number" name="shares" id="shares"><br>
+        Expiry : <input type="number" name="expiry" id="expiry"><br>
+        TknAmt : <input type="number" name="tknAmt" id="tknAmt"><br>
 
-        dApp.writeOptions(strike, premium, shares, expiry, tknAmt, ticker)}
-    </script>
-    <div class="card-action">
-        <a id="dapp-write-option" href="#" onclick="WriteOption()">Write Option</a>
-    </div>
+        <script>
+          function WriteOption(){
+            var strike = document.getElementById('strike').value;
+            var premium = document.getElementById('premium').value;
+            var shares = document.getElementById('shares').value; 
+            var expiry = document.getElementById('expiry').value;
+            var tknAmt = document.getElementById('tknAmt').value;
+            var ticker = document.getElementById('ticker_opt').value;
 
-    <!--Get Eth Price-->
-    <div class="card-action">
-      <a id="dapp-get-eth-price" href="#" onclick="dApp.getEthPrice()">Get Eth Price</a>
-    </div>
+            dApp.writeOptions(strike, premium, shares, expiry, tknAmt, ticker)}
+        </script>
+        <div class="card-action">
+            <a id="dapp-write-option" href="#" onclick="WriteOption()">Write Option</a>
+        </div>
 
-    <!--Get Stock Price-->
-    <script>
-      function StockPrice(){
-        dApp.getStockPrice(document.getElementById('stock_ticker').value)
-        }
-      </script>
-    <input type="text" name="ticker" id="stock_ticker"><br> 
-    <div class="card-action">
-      <a id="dapp-get-stock-price" href="#" onclick="StockPrice()">Get Stock Price</a>
+        <!--Get Eth Price-->
+        <div class="card-action">
+          <a id="dapp-get-eth-price" href="#" onclick="dApp.getEthPrice()">Get Eth Price</a>
+        </div>
+
+        <!--Get Stock Price-->
+        <script>
+          function StockPrice(){
+            dApp.getStockPrice(document.getElementById('stock_ticker').value)
+            }
+          </script>
+        <input type="text" name="ticker" id="stock_ticker"><br> 
+        <div class="card-action">
+          <a id="dapp-get-stock-price" href="#" onclick="StockPrice()">Get Stock Price</a>
+        </div>
+      </div>
+
+      <div class="float-child">
+        <h5>View Optionbook</h5> 
+      </div>
     </div>
    
 
