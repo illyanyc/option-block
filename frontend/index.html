@@ -57,6 +57,8 @@
                   <th>Strike</th>
                   <th>Expiration</th>
                   <th>Premium</th>
+                  <th>Value</th>
+                  <th>Update Value</th>
                   <th>Exercise</th>
               </tr>
             </thead>
@@ -67,6 +69,8 @@
                 <td>150.00</td>
                 <td>2021-09-30</td>
                 <td>3423423123</td>
+                <td>8347543753488</td>
+                <td><a class="waves-effect waves-light btn" onclick="">Update</a></td>
                 <td><a class="waves-effect waves-light btn" onclick="">Exercise</a></td>
               </tr>
             </tbody>
@@ -81,6 +85,8 @@
                 <th>Strike</th>
                 <th>Expiration</th>
                 <th>Premium</th>
+                <th>Value</th>
+                <th>Fulfilled</th>
                 <th>Cancel</th>
               </tr>
             </thead>
@@ -91,6 +97,8 @@
                 <td>150.00</td>
                 <td>2021-09-30</td>
                 <td>3423423123</td>
+                <td>847589347589348</td>
+                <td>False</td>
                 <td><a class="waves-effect waves-light btn" onclick="">Cancel</a></td>
               </tr>
             </tbody>
@@ -170,10 +178,20 @@
         <!--Premium Text Field-->
         <div class="float-container">
           <div class="float-child">
-            Premium USD<input type="number" name="premium-usd" id="premium-usd" onchange="setOptionPremiumInEth()"><br>
+            Premium USD<input type="number" name="premium-usd" id="premium-usd" onchange="updatePremium()"><br>
           </div>
           <div class="float-child">
             Premium Wei<input disabled type="number" name="premium-eth" id="premium-eth"><br>
+          </div>
+        </div>  
+
+        <!--Total Premium Text Field-->
+        <div class="float-container">
+          <div class="float-child">
+            Total Premium USD<input disabled type="number" name="total-premium-usd" id="total-premium-usd"><br>
+          </div>
+          <div class="float-child">
+            Total Premium Wei<input disabled type="number" name="total-premium-eth" id="total-premium-eth"><br>
           </div>
         </div>  
 
@@ -239,6 +257,7 @@
       var price = document.getElementById("price").value;
       var strike = document.getElementById("strike").value;
       var mat_date = document.getElementById("expiry").value;
+      var shares = document.getElementById("shares").value;
       var flag = $("input[name=call_put_switch]:checked").next().text();
       var parsed_flag;
       if (flag == "Call"){
@@ -260,6 +279,7 @@
       // Set textbox to Premium
       document.getElementById("premium-usd").value = premium;
       setOptionPremiumInEth();
+      setTotalPremium();
     }
 
     // Calculate premium 
@@ -294,6 +314,18 @@
       document.getElementById("premium-eth").value = Math.trunc(premiumInEth * 10**18); 
     }
 
+    // Set Total Premium
+    async function setTotalPremium(){
+      var totalPremiumUSD = document.getElementById("premium-usd").value * document.getElementById("shares").value;
+      document.getElementById("total-premium-usd").value = totalPremiumUSD;
+      setTotalPremiumEth(totalPremiumUSD);
+    }
+
+    async function setTotalPremiumEth(totalPremiumUSD){
+      const totalPremiumETH = await convertUSDtoETH(totalPremiumUSD);
+      document.getElementById("total-premium-eth").value = Math.trunc(totalPremiumETH * 10**18);
+    }
+
     // Calculate Token Amount
     async function setTokenAmount(){
       // Get strike price
@@ -302,16 +334,17 @@
       const shares = document.getElementById('shares').value;
       // Calculate Colletaral in USD
       const tknAmtUSD = strike * shares;
-      const tknAmtETH = await convertUSDtoETH(strike * shares)
+      const tknAmtETH = await convertUSDtoETH(strike * shares);
       document.getElementById("tknAmt-usd").value = tknAmtUSD;
       // Calculate Colleteral in Wei
       document.getElementById("tknAmt-eth").value = Math.trunc(tknAmtETH * 10**18);
+      updatePremium();
     }
 
     // Update Values
-    async function updatePremiumAndToken(){
+    async function updatePremium(){
       setOptionPremiumInEth();
-      setTokenAmount();
+      setTotalPremium();
     }
 
     // Convert USD to wei
@@ -352,17 +385,17 @@
       console.log("expiry : ".concat(expiry))
 
       // Get Premium in Wei
-      var premium = document.getElementById("premium-eth").value;
-      console.log("premium : ".concat(premium))
+      var totalPremium = document.getElementById("total-premium-eth").value;
+      console.log("totalPremium : ".concat(totalPremium))
 
       // Get Token Amount
       var tknAmt = document.getElementById('tknAmt-eth').value;
       console.log("tknAmt : ".concat(tknAmt))
       
       if (flag=="Call"){
-        await dApp.writeCallOption(strike, premium, shares, expiry, tknAmt, ticker);
+        await dApp.writeCallOption(strike, totalPremium, shares, expiry, tknAmt, ticker);
       }else if(flag=="Put"){
-        await dApp.writePutOption(strike, premium, shares, expiry, tknAmt, ticker);
+        await dApp.writePutOption(strike, totalPremium, shares, expiry, tknAmt, ticker);
       }
     };
 
