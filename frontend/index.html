@@ -207,10 +207,7 @@
         <br><br>
         <!-- <body onLoad="buildAllAvailableOptionsTable()"> -->
           <table id="optionsTable" class="responsive-table" border="1" >
-            <tr>
-              <td>Key</td><td>Type</td><td>Ticker</td><td>Strike</td><td>Shares</td><td>Premium</td><td>ID</td><td>Buy</td>
-            </th>
-            </table>
+          </table>
         <!-- </body>  -->
       </div>
 
@@ -251,36 +248,21 @@
 
     // Populate available options table
     async function buildAllAvailableOptionsTable(){
-      // (B) PARSE THE JSON STRING INTO OBJECT FIRST
-      var optionsList;
-      const json_obj = dApp.optionList;
+      // Check JSON
+      console.log(optionList)
 
-      // await ( await dApp.getAllAvailableOptions().then(response => 
-          // console.log({response})
-          // response.json().then(data => ({
-          //     data: data,
-          //     status: response.status
-          //   })
-          //   ).then(res => {
-          //       console.log(res.status, res.data.premium);
-          //       optionsList = res.data;
-          //   })
-          // )
-          // );
-
-      console.log(json_obj)
-      
-
-      // var optionList = JSON.stringify(json_obj);
-      
+      // Get Eth Price
+      const ethPrice = await dApp.getEthPrice();
     
-      // (C) GENERATE TABLE
+      // Generate Table
       var table = "<table>";
+      table += '<tr><td>Key</td><td>Type</td><td>Ticker</td><td>Strike</td><td>Shares</td><td>Premium USD</td><td>Premium Wei</td><td>ID</td><td>Buy</td></th>'
       for (let key in optionList) {
 
         const strike = optionList[key][0];          //Price in USD option
         const ethPriceAtTimeOfWrite = optionList[key][1];//Eth Price in USD at time of write
-        const premium = optionList[key][2];             //Fee in contract token that option writer charges
+        const premiumETH = optionList[key][2];             //Fee in contract token that option writer charges
+        const premiumUSD = premiumETH / 10**18 * ethPrice;
         const shares = optionList[key][3];              //Number of shares in the option
         const expiry = optionList[key][4];            //Unix timestamp of expiration time
         const amount = optionList[key][5];               //Amount of tokens the option contract is for
@@ -299,7 +281,7 @@
         }else{type='Put'};
 
         if (exercised == false && canceled==false){
-          table += `<tr><td>${key}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${premium}</td><td>${id}</td><td><a class="waves-effect waves-light btn" onclick="submitBuyOption(${id}, ${premium})">Buy</a></td></tr>`;
+          table += `<tr><td>${key}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${premiumUSD}</td><td>${premiumETH}</td><td>${id}</td><td><a class="waves-effect waves-light btn" onclick="submitBuyOption(${id}, ${premiumETH})">Buy</a></td></tr>`;
         }
       }
       table += "</table>";
