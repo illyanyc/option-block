@@ -1,0 +1,13 @@
+
+.card {
+    width:300px;
+}
+
+.row {
+    padding:3%;
+}
+
+.nav-wrapper {
+    background-color: #45998f !important;
+    padding:5px;
+}
