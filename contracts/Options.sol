@@ -34,6 +34,9 @@ contract Options {
 // events
     event writeCallOptionEvent (address owner, uint strike, uint premium, uint shares, uint expiry, uint tknAmt, string ticker);
     event writePutOptionEvent  (address owner, uint strike, uint premium, uint shares, uint expiry, uint tknAmt, string ticker);
+    event buyOptionEvent  (uint ID);
+    event cancelOptionEvent  (uint ID);
+    event exerciseOptionEvent  (uint ID);
 // ------
 
     constructor() {
@@ -47,7 +50,7 @@ contract Options {
             option storage opt = options[i];
             uint stockPrice = priceGetter.getTickerPrice(opt.ticker);
             // calculatet the number of stocks the option is for
-            opt.latestValue = calculateOptionValue(stockPrice, ethPrice, opt.strike, opt.shares, opt.amount, opt.isCallOption);
+            opt.latestValue = calculateOptionValue(stockPrice, ethPrice, opt.strike, opt.shares, opt.isCallOption);
         }
     }
 
@@ -93,7 +96,7 @@ contract Options {
                                    false,
                                    false,
                                    options.length,
-                                   calculateOptionValue(stockPrice, ethPrice, strike, shares, tknAmt, isCallOption),
+                                   calculateOptionValue(stockPrice, ethPrice, strike, shares, isCallOption),
                                    payable(msg.sender),
                                    payable(address(0)),
                                    ticker);
@@ -112,13 +115,14 @@ contract Options {
         //Transfer premium payment from buyer
         require(msg.value == opt.premium, "Incorrect amount of ETH sent for premium");
 
-        //IN - Check to make sure option is still availabel 
-        require(opt.buyer == address(0));
+        //IN - Check to make sure option is still available
+        require(opt.buyer == payable(address(0)), "This option has already been bought.");
 
         //Transfer premium payment to writer
         opt.writer.transfer(msg.value);
 
         opt.buyer = payable(msg.sender);
+        emit buyOptionEvent(ID);
     }
 
     function cancelOption(uint ID) public {
@@ -127,13 +131,15 @@ contract Options {
         require(opt.writer == msg.sender, "You do not own this option");
         require(!opt.canceled, "Option has already been canceled");
         require(!opt.exercised, "Option has already been executed");
+        require(opt.buyer != payable(address(0)), "This option has already been bought.");
 
         opt.canceled = true;
         payable(msg.sender).transfer(opt.amount);
+        emit cancelOptionEvent(ID);
     }
 
     // Exercise your call option, ID of option and payment
-    function exercise(uint ID) public payable {
+    function exercise(uint ID) public {
         option storage opt = options[ID];
         // If not expired and not already exercised, allow option owner to exercise
         // To exercise, the strike value*amount equivalent paid to writer (from buyer) and amount of tokens in the contract paid to buyer
@@ -143,25 +149,34 @@ contract Options {
 
         //Buyer exercises option by paying strike*amount equivalent ETH value
         require(opt.latestValue > 0, "The option contract is worthless");
-        //Pay writer the exercise cost
-        opt.writer.transfer(opt.latestValue);
-        //Pay buyer contract amount of ETH
-        payable(msg.sender).transfer(opt.amount);
+
+        if (opt.latestValue >= opt.amount) {
+            opt.buyer.transfer(opt.amount);
+        } else {
+            //Pay buy the value of the option
+            opt.buyer.transfer(opt.latestValue);
+            //Pay writer the remaining ETH
+            opt.writer.transfer(opt.amount - opt.latestValue);
+        }
+
         opt.exercised = true;
+        emit exerciseOptionEvent(ID);
     }
 
-    function calculateOptionValue(uint stockPrice, uint ethPrice, uint strike, uint shares, uint amount, bool isCallOption) private pure returns (uint) {
+    function calculateOptionValue(uint stockPrice, uint ethPrice, uint strike, uint shares, bool isCallOption) private pure returns (uint) {
         if (isCallOption) {
-            
+            if (stockPrice <= strike) {
+                return 0;
+            }
             uint positionValueUSD = stockPrice.mul(shares).sub(strike.mul(shares));
-            uint exerciseValWei = positionValueUSD.div(ethPrice).mul(10**18);
-
+            uint exerciseValWei = positionValueUSD.mul(10**18).div(ethPrice);
             return exerciseValWei;
         } else {
-            
+            if (strike <= stockPrice) {
+                return 0;
+            }
             uint positionValueUSD = strike.mul(shares).sub(stockPrice.mul(shares));
-            uint exerciseValWei = positionValueUSD.div(ethPrice).mul(10**18);
-
+            uint exerciseValWei = positionValueUSD.mul(10**18).div(ethPrice);
             return exerciseValWei;
         }
     }
