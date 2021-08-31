@@ -16,16 +16,94 @@
 </head>
 
 <body class="grey lighten-3">
+  <nav>
+    <div class="nav-wrapper">
+      <a href="#" class="brand-logo">OPTION BLOCK</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="team.html">Team</a></li>
+        <li><a href="https://github.com/illyanyc/option-block">Code</a></li>
+      </ul>
+    </div>
+  </nav>
 
-  <div class="container">
+  <h/>
 
-    <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&width=1000&height=200&section=header&text=Option-Block&fontSize=30&fontColor=black">
-    <hr />
+  <div class="col">
+    <!--About OptionBlock-->
+    <div class="row">
+      <div class="col">
+        OptionBlock is a decentralized stock option clearnig house. It frees people from the centralized 
+        stranglehold of big corporations and gives freedom to write uncovered calls and puts against U.S. stocks.
+        Currently, OptionBlock is a demo, and all options contracts are trading in tETH on the Ropsten testnet.
+        In this demo only a few stocks are supported: AAPL, GOOGL, FB, NFXL, AMZN, NVDA, and TSLA. OptionBlock is 
+        enabled by the DeFi technology, powered by Ethereum Smart Contracts and custom Data Oracles. The source 
+        code for this project is available on <a href="https://github.com/illyanyc/option-block">Github</a>.
+      </div>
+    </div>
+    <div class="divider"></div>
 
-    <div class="float-container">
-      <div class="float-child">
+
+    <!--Portfolio-->
+    <div class="row">
+      <h5>Portfolio</h5>
+      <div class="row">
+        <div class="col s6">
+          <h6>Long</h6>
+          <table class="responsive-table">
+            <thead>
+              <tr>
+                  <th>Ticker</th>
+                  <th>Strike</th>
+                  <th>Expiration</th>
+                  <th>Premium</th>
+                  <th>Exercise</th>
+              </tr>
+            </thead>
+    
+            <tbody>
+              <tr>
+                <td>AAPL</td>
+                <td>150.00</td>
+                <td>2021-09-30</td>
+                <td>3423423123</td>
+                <td><a class="waves-effect waves-light btn" onclick="">Exercise</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col s6">
+          <h6>Short</h6>
+          <table>
+            <thead>
+              <tr>
+                <th>Ticker</th>
+                <th>Strike</th>
+                <th>Expiration</th>
+                <th>Premium</th>
+                <th>Cancel</th>
+              </tr>
+            </thead>
+    
+            <tbody>
+              <tr>
+                <td>AAPL</td>
+                <td>150.00</td>
+                <td>2021-09-30</td>
+                <td>3423423123</td>
+                <td><a class="waves-effect waves-light btn" onclick="">Cancel</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+
+    <!--Write Options-->
+    <div class="row">
+      <div class="col s6 m6">
         <h5>Write Options</h5>
-        <!--Write Option-->
 
         <!--Call or Put Selector-->
         <form action="#">
@@ -49,10 +127,10 @@
           <label for="ticker_opt">Ticker</label>
         </div>
 
-         <!--Get Stock Price Button-->
-         <a class="waves-effect waves-light btn" id="dapp-get-stock-price" onclick="populatePrice()">Get Stock Price from Oracle</a><br>
+          <!--Get Stock Price Button-->
+          <a class="waves-effect waves-light btn" id="dapp-get-stock-price" onclick="populatePrice()">Get Stock Price from Oracle</a><br>
         <br><br>
-  
+
         <!--Stock Price Text Field-->
         <div class="input-field col s6">
           <input disabled placeholder="$" type="text" name="price" id="price" class="validate">
@@ -102,19 +180,19 @@
         <!--Write Option Button-->
         <a class="btn waves-effect waves-light" type="submit" id="dapp-write-option" onclick="submitWriteOption()">Write Option</a><br>
         <br><br>
-
-        <!-- Get Eth Price
-        <div class="card-action">
-          <a id="dapp-get-eth-price" href="#" onclick="dApp.getEthPrice()">Get Eth Price</a>
-        </div> -->
-
-       
       </div>
 
-      <div class="float-child">
+      <div class="col s9 m6">
         <h5>View Optionbook</h5> 
       </div>
+
+
+      <div class="col s1 m6">
+      </div>
+
+
     </div>
+  </div>
    
 
 

@@ -180,4 +180,73 @@ contract Options {
             return exerciseValWei;
         }
     }
+
+    function getAllAvailableOptions() public view returns (option[] memory) {
+        uint numAvailable = 0;
+        for (uint i = 0; i < options.length; i++) {
+            if (isAvailable(options[i])) {
+                numAvailable++;
+            }
+        }
+        option[] memory available = new option[](numAvailable);
+        uint j = 0;
+        for (uint i = 0; i < options.length; i++) {
+            if (isAvailable(options[i])) {
+                available[j] = options[i];
+                j++;
+            }
+        }
+        return available;
+    }
+
+    function isAvailable(option memory opt) private view returns (bool) {
+        return !opt.exercised &&
+                !opt.canceled &&
+                opt.expiry > block.timestamp &&
+                opt.buyer == payable(address(0));
+    }
+
+    function getMyOptions() public view returns (option[] memory) {
+        uint numOptions = 0;
+        for (uint i = 0; i < options.length; i++) {
+            if (isMyOption(options[i])) {
+                numOptions++;
+            }
+        }
+        option[] memory myOptions = new option[](numOptions);
+        uint j = 0;
+        for (uint i = 0; i < options.length; i++) {
+            if (isMyOption(options[i])) {
+                myOptions[j] = options[i];
+                j++;
+            }
+        }
+        return myOptions;
+    }
+
+    function isMyOption(option memory opt) private view returns (bool) {
+        return opt.writer == payable(msg.sender);
+    }
+
+    function getOptionsBought() public view returns (option[] memory) {
+        uint numBought = 0;
+        for (uint i = 0; i < options.length; i++) {
+            if (isBuyerMe(options[i])) {
+                numBought++;
+            }
+        }
+        option[] memory bought = new option[](numBought);
+        uint j = 0;
+        for (uint i = 0; i < options.length; i++) {
+            if (isBuyerMe(options[i])) {
+                bought[j] = options[i];
+                j++;
+            }
+        }
+        return bought;
+    }
+
+    function isBuyerMe(option memory opt) private view returns (bool) {
+        return opt.buyer == payable(msg.sender);
+    }
 }
