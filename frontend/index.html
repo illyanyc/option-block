@@ -442,9 +442,9 @@
       console.log("tknAmt : ".concat(tknAmt))
       
       if (flag=="Call"){
-        await dApp.writeCallOption(strike, totalPremium, shares, expiry, tknAmt, ticker);
+        await dApp.writeCallOption(strike*100, totalPremium, shares, expiry, tknAmt, ticker);
       }else if(flag=="Put"){
-        await dApp.writePutOption(strike, totalPremium, shares, expiry, tknAmt, ticker);
+        await dApp.writePutOption(strike*100, totalPremium, shares, expiry, tknAmt, ticker);
       };
     };
 
