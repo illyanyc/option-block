@@ -1,4 +1,3 @@
-
 // Change this address to match your deployed contract!
 const contract_address = "0x14122EB49a71D2d4a3e373d861eF3459b25f0Dd4";
 
@@ -15,12 +14,43 @@ var oracle_Contracts = {
 var EthPrice;
 var stockPrice;
 
+// async function getURL(url) {
 
-// async function optionPremiumBlackScholes(symbol,price,strike,mat_date, expiry){
-//   URL = 'https://option-block.ue.r.appspot.com/option_bs/{}/{}/{}/{}/{}'.format(symbol,price,strike,mat_date,);
-//   var Data = await fetch(URL);
-//   return Data;
+//     var premium;
+//     let obj = await (await fetch(url).then(response => 
+//       response.json().then(data => ({
+//           data: data,
+//           status: response.status
+//       })
+//       ).then(res => {
+//           console.log(res.status, res.data.premium);
+//           premium = res.data.premium;
+//       })););
+//     return premium;
 // }
+
+async function optionPremiumBlackScholes(symbol,price,strike,mat_date,flag){
+  var _price = String(parseFloat(price) * 100);
+  var _strike = String(parseFloat(strike) * 100);
+  var url = 'https://option-block.ue.r.appspot.com/option_yf/'+symbol+'/'+_strike+'/'+mat_date+'/'+flag;
+
+  // debug
+  console.log(url);
+
+  var premium;
+    let obj = await (await fetch(url).then(response => 
+      response.json().then(data => ({
+          data: data,
+          status: response.status
+        })
+        ).then(res => {
+            console.log(res.status, res.data.premium);
+            premium = res.data.premium;
+        })
+      )
+    );
+  return premium;
+}
 
 const dApp = {
   ethEnabled: function() {
@@ -43,11 +73,12 @@ const dApp = {
 
   // Gets ETH price from ETH oracle
   getEthPrice: async function(){
-    EthPrice = await this.ethOracle.methods.getClose().call();
-    var message = "ETHUSD : $".concat(EthPrice/100);
+    ethPrice = await this.ethOracle.methods.getClose().call();
+    var message = "ETHUSD : $".concat(ethPrice/100);
     console.log(message);
-    M.toast({ html: message })
+    M.toast({ html: message });
     
+    return ethPrice/100; 
   },
 
   // Gets stock price from stock oracle
@@ -63,7 +94,9 @@ const dApp = {
     stockPrice = await this.stockOracle.methods.getClose().call();
     var message = ticker.concat(" : $").concat(stockPrice/100);
     console.log(message);
-    M.toast({ html: message })    
+    M.toast({ html: message })
+
+    return stockPrice/100    
   },
 
   main: async function() {

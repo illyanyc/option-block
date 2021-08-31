@@ -4,6 +4,8 @@
     "ethereumjs-tx": "^2.1.2",
     "fetch": "^1.1.0",
     "node-fetch": "^2.6.1",
+    "require": "^2.4.20",
+    "requirejs": "^2.3.6",
     "truffle-contract": "^4.0.31",
     "web3": "^1.5.2"
   }
