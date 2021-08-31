@@ -50,7 +50,7 @@
         </div>
 
          <!--Get Stock Price Button-->
-         <a class="waves-effect waves-light btn" id="dapp-get-stock-price" onclick="populatePrice()">Get Stock Price</a><br>
+         <a class="waves-effect waves-light btn" id="dapp-get-stock-price" onclick="populatePrice()">Get Stock Price from Oracle</a><br>
         <br><br>
   
         <!--Stock Price Text Field-->
@@ -61,23 +61,32 @@
 
         <!--Strike Price Text Field-->
         <div class="input-field col s6">
-          <input type="text" name="strike" id="strike" class="validate">
+          <input type="text" name="strike" id="strike" class="validate" onchange="setTokenAmount()">
           <label for="strike">Strike Price</label>
         </div>
 
         <!--Shares Text Field (default: 100)-->
         <div class="input-field col s6">
-          <input type="text" name="shares" id="shares" class="validate" value="100">
+          <input type="text" name="shares" id="shares" class="validate" value="100" onchange="setTokenAmount()">
           <label for="shares">Shares per Contract</label>
         </div>
+
+        <!--Claculate and set Colleteral-->
+        <div class="float-container">
+          <div class="float-child">
+            Colleteral USD : <input disabled type="number" name="tknAmt-usd" id="tknAmt-usd"><br>
+          </div>
+          <div class="float-child">
+            Colleteral Wei : <input disabled type="number" name="tknAmt-eth" id="tknAmt-eth"><br>
+          </div>
+        </div>  
 
         <!--Expiration Date Selector-->
         <label for="expiry">Expiration Date</label>
         <input type="text" class="datepicker" name="expiry" id="expiry">
         
-
         <!--Get Premiumn Button-->
-        <a class="waves-effect waves-light btn" id="dapp-get-premium-price" onclick="getPremium()">Get Recommended Premium</a><br>
+        <a class="waves-effect waves-light btn" id="dapp-get-premium-price" onclick="getPremium()">Calc. Recommended Premium</a><br>
         <br><br>
 
         <!--Premium Text Field-->
@@ -86,11 +95,9 @@
             Premium USD<input type="number" name="premium-usd" id="premium-usd" onchange="setOptionPremiumInEth()"><br>
           </div>
           <div class="float-child">
-            Premium ETH<input disabled type="number" name="premium-eth" id="premium-eth"><br>
+            Premium Wei<input disabled type="number" name="premium-eth" id="premium-eth"><br>
           </div>
         </div>  
-
-        Token Amount (Wei) : <input disabled type="number" name="tknAmt" id="tknAmt"><br>
 
         <!--Write Option Button-->
         <a class="btn waves-effect waves-light" type="submit" id="dapp-write-option" onclick="submitWriteOption()">Write Option</a><br>
@@ -136,13 +143,17 @@
       });
     });
 
-
     // Get Stock Price
     function StockPrice(){
        return dApp.getStockPrice(document.getElementById('ticker_opt').value)
     };
 
-
+    // Populates Stock Price in the text box
+    function populatePrice(){
+      StockPrice().then(function updatePriceField(_price){
+        document.getElementById("price").value = _price;
+      })
+    };
 
     // Get Calculated Premium
     async function getPremium(){
@@ -164,14 +175,37 @@
       console.log("flag : ".concat(parsed_flag));
 
       // Calculate premium
-      var premium = await optionPremiumBlackScholes(symbol, price, strike, mat_date, parsed_flag);
+      var premium = await optionPremium(symbol, price, strike, mat_date, parsed_flag);
 
       console.log("premium : ".concat(premium));
 
       // Set textbox to Premium
       document.getElementById("premium-usd").value = premium;
       setOptionPremiumInEth();
+    }
 
+    // Calculate premium 
+    async function optionPremium(symbol,price,strike,mat_date,flag){
+      var _price = String(parseFloat(price) * 100);
+      var _strike = String(parseFloat(strike) * 100);
+      var url = 'https://option-block.ue.r.appspot.com/option_yf/'+symbol+'/'+_strike+'/'+mat_date+'/'+flag;
+
+      // debug
+      console.log(url);
+
+      var premium;
+        let obj = await (await fetch(url).then(response => 
+          response.json().then(data => ({
+              data: data,
+              status: response.status
+            })
+            ).then(res => {
+                console.log(res.status, res.data.premium);
+                premium = res.data.premium;
+            })
+          )
+        );
+      return premium;
     }
 
     // Set Option Premium in ETH and Set Token Amount
@@ -179,8 +213,27 @@
       // Set textboc to Premium in ETH
       var premium = document.getElementById("premium-usd").value;
       const premiumInEth = await convertUSDtoETH(premium)
-      document.getElementById("premium-eth").value = premiumInEth;
-      document.getElementById("tknAmt").value = Math.trunc(premiumInEth * 10**18);
+      document.getElementById("premium-eth").value = Math.trunc(premiumInEth * 10**18); 
+    }
+
+    // Calculate Token Amount
+    async function setTokenAmount(){
+      // Get strike price
+      const strike = document.getElementById('strike').value;
+      // Get Shares
+      const shares = document.getElementById('shares').value;
+      // Calculate Colletaral in USD
+      const tknAmtUSD = strike * shares;
+      const tknAmtETH = await convertUSDtoETH(strike * shares)
+      document.getElementById("tknAmt-usd").value = tknAmtUSD;
+      // Calculate Colleteral in Wei
+      document.getElementById("tknAmt-eth").value = Math.trunc(tknAmtETH * 10**18);
+    }
+
+    // Update Values
+    async function updatePremiumAndToken(){
+      setOptionPremiumInEth();
+      setTokenAmount();
     }
 
     // Convert USD to wei
@@ -192,7 +245,9 @@
     }
 
     // Write Option
-    function submitWriteOption(){
+    async function submitWriteOption(){
+      const ethPrice = await dApp.getEthPrice();
+
       // Get Option flag -> Call or Put
       var flag = $("input[name=call_put_switch]:checked").next().text();
       console.log("flag : ".concat(flag))
@@ -203,9 +258,14 @@
 
       // Get Strike Price
       var strike = document.getElementById('strike').value;
+      var strikeEth = convertUSDtoETH(strike) 
       console.log("strike : ".concat(strike))
 
-      // Get number of shares
+      // Get Stock Price
+      var price = document.getElementById('price').value;
+      console.log("price : ".concat(price))
+
+      // Get Number of Shares
       var shares = document.getElementById('shares').value; 
       console.log("shares : ".concat(shares))
 
@@ -214,25 +274,19 @@
       console.log("expiry : ".concat(expiry))
 
       // Get Premium in Wei
-      var premium = document.getElementById("tknAmt").value;
+      var premium = document.getElementById("premium-eth").value;
       console.log("premium : ".concat(premium))
 
       // Get Token Amount
-      var tknAmt = document.getElementById('tknAmt').value;
+      var tknAmt = document.getElementById('tknAmt-eth').value;
       console.log("tknAmt : ".concat(tknAmt))
       
-
-      // dApp.writeOptions(strike, premium, shares, expiry, tknAmt, ticker)
+      if (flag=="Call"){
+        await dApp.writeCallOption(strike, premium, shares, expiry, tknAmt, ticker);
+      }else if(flag=="Put"){
+        await dApp.writePutOption(strike, premium, shares, expiry, tknAmt, ticker);
+      }
     };
-
-    // Populates Stock Price in the text box
-    function populatePrice(){
-      StockPrice().then(function updatePriceField(_price){
-        document.getElementById("price").value = _price;
-      })
-    };
-
-    // Calculates Stock Option Premium in USD and ETH
 
   </script>
   <!-- dApp JavaScript -->
