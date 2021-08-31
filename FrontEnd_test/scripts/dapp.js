@@ -1,5 +1,5 @@
 // Change this address to match your deployed contract!
-const contract_address = "0x8087d6fFB2676c8799B926a09cc955c0e82cAec9";
+const contract_address = "0xeeE4afbBB163d6818e3e2251fcA26B0fe2298d65";
 
 var oracle_Contracts = {
 'AAPL':	'0x57960D9E1244deB9181BdC2a6B34968718fed1A4',
@@ -47,7 +47,7 @@ const dApp = {
     // var message = "ETHUSD : $".concat(ethPrice/100);
     // console.log(message);
     // M.toast({ html: message });
-    return ethPrice/100; 
+    return ethPrice/100;
   },
 
   // Gets stock price from stock oracle
@@ -65,7 +65,15 @@ const dApp = {
     console.log(message);
     M.toast({ html: message })
 
-    return stockPrice/100    
+    return stockPrice/100
+  },
+
+  getAllAvailableOptions: async function() {
+      this.contract.methods.getAllAvailableOptions().call().then((response) => {
+          if (response && response.length > 0) {
+              console.log({ ...response[0] });
+          }
+      });
   },
 
   main: async function() {
@@ -93,6 +101,7 @@ const dApp = {
     );
 
     console.log("Contract object", this.contract);
+    this.getAllAvailableOptions();
   }
 };
 
