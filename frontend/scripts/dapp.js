@@ -13,6 +13,7 @@ var oracle_Contracts = {
 
 var EthPrice;
 var stockPrice;
+var optionList;
 
 const dApp = {
   ethEnabled: function() {
@@ -69,11 +70,21 @@ const dApp = {
   },
 
   getAllAvailableOptions: async function() {
-      this.contract.methods.getAllAvailableOptions().call().then((response) => {
-          if (response && response.length > 0) {
-              console.log({ ...response[0] });
-          }
-      });
+    this.contract.methods.getAllAvailableOptions().call().then((response) => {
+        if (response && response.length > 0) {
+            // console.log({response});
+            // return {response};
+            optionList = {response}['response'];
+            console.log(optionList)
+        }
+    });
+  },
+
+  buyOption: async function(ID, premium) {
+    this.contract.methods.buyOption(ID).send({from: this.accounts[0], value : premium}).on("receipt", (receipt) => {
+      M.toast({ html: "Call option successfully bought." });
+      location.reload();
+    });
   },
 
   main: async function() {

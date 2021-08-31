@@ -201,7 +201,17 @@
       </div>
 
       <div class="col s9 m6">
-        <h5>View Optionbook</h5> 
+        <h5>View Optionbook</h5>
+        <!--Write Option Button-->
+        <a class="btn waves-effect waves-light" type="submit" id="dapp-get-options" onclick="buildAllAvailableOptionsTable()">Get Options from Blockchain</a><br>
+        <br><br>
+        <!-- <body onLoad="buildAllAvailableOptionsTable()"> -->
+          <table id="optionsTable" class="responsive-table" border="1" >
+            <tr>
+              <td>Key</td><td>Type</td><td>Ticker</td><td>Strike</td><td>Shares</td><td>Premium</td><td>ID</td><td>Buy</td>
+            </th>
+            </table>
+        <!-- </body>  -->
       </div>
 
 
@@ -238,6 +248,63 @@
         autoClose: true
       });
     });
+
+    // Populate available options table
+    async function buildAllAvailableOptionsTable(){
+      // (B) PARSE THE JSON STRING INTO OBJECT FIRST
+      var optionsList;
+      const json_obj = dApp.optionList;
+
+      // await ( await dApp.getAllAvailableOptions().then(response => 
+          // console.log({response})
+          // response.json().then(data => ({
+          //     data: data,
+          //     status: response.status
+          //   })
+          //   ).then(res => {
+          //       console.log(res.status, res.data.premium);
+          //       optionsList = res.data;
+          //   })
+          // )
+          // );
+
+      console.log(json_obj)
+      
+
+      // var optionList = JSON.stringify(json_obj);
+      
+    
+      // (C) GENERATE TABLE
+      var table = "<table>";
+      for (let key in optionList) {
+
+        const strike = optionList[key][0];          //Price in USD option
+        const ethPriceAtTimeOfWrite = optionList[key][1];//Eth Price in USD at time of write
+        const premium = optionList[key][2];             //Fee in contract token that option writer charges
+        const shares = optionList[key][3];              //Number of shares in the option
+        const expiry = optionList[key][4];            //Unix timestamp of expiration time
+        const amount = optionList[key][5];               //Amount of tokens the option contract is for
+        const isCallOption = optionList[key][6];        //Is this a call option
+        const exercised = optionList[key][7];            //Has option been exercised
+        const canceled = optionList[key][8];             //Has option been canceled
+        const id = optionList[key][9];                  //Unique ID of option, also array index
+        const latestValue = optionList[key][10];           //Helper to show last updated value
+        const writer = optionList[key][11];    //Issuer of option
+        const buyer = optionList[key][12];     //Buyer of option
+        const ticker = optionList[key][13];   
+        var type;
+
+        if (isCallOption==true){
+          type = 'Call'
+        }else{type='Put'};
+
+        if (exercised == false && canceled==false){
+          table += `<tr><td>${key}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${premium}</td><td>${id}</td><td><a class="waves-effect waves-light btn" onclick="submitBuyOption(${id}, ${premium})">Buy</a></td></tr>`;
+        }
+      }
+      table += "</table>";
+      document.getElementById("optionsTable").innerHTML = table;
+    };
 
     // Get Stock Price
     function StockPrice(){
@@ -396,12 +463,18 @@
         await dApp.writeCallOption(strike, totalPremium, shares, expiry, tknAmt, ticker);
       }else if(flag=="Put"){
         await dApp.writePutOption(strike, totalPremium, shares, expiry, tknAmt, ticker);
-      }
+      };
     };
+
+  async function submitBuyOption(ID, premium){
+    await dApp.buyOption(ID, premium);
+  }
 
   </script>
   <!-- dApp JavaScript -->
   <script src="scripts/dapp.js"></script>
+
+
 
 </body>
 </html>
