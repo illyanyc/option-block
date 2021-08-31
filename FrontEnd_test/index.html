@@ -13,8 +13,6 @@
   <!--Custom stylesheet-->
   <link rel="stylesheet" href="style.css" />
 
-  <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
-  <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>  
 </head>
 
 <body class="grey lighten-3">
@@ -29,44 +27,81 @@
         <h5>Write Options</h5>
         <!--Write Option-->
 
-        Call or Put : <input type="checkbox" checked data-toggle="toggle" data-on="Call" data-off="Put" data-onstyle="success" data-offstyle="danger"><br>
-        Ticker : <input type="text" name="ticker_opt" id="ticker_opt"><br>
-        Strike : <input type="number" name="strike" id="strike"><br>
-        Premium : <input type="number" name="premium" id="premium"><br> 
-        Shares : <input type="number" name="shares" id="shares"><br>
-        Expiry : <input type="number" name="expiry" id="expiry"><br>
-        TknAmt : <input type="number" name="tknAmt" id="tknAmt"><br>
+        <!--Call or Put Selector-->
+        <form action="#">
+          <p>
+            <label>
+              <input name="call_put_switch" type="radio" checked />
+              <span>Call</span>
+            </label>
+          </p>
+          <p>
+            <label>
+              <input name="call_put_switch" type="radio" />
+              <span>Put</span>
+            </label>
+          </p>
+        <br>
 
-        <script>
-          function WriteOption(){
-            var strike = document.getElementById('strike').value;
-            var premium = document.getElementById('premium').value;
-            var shares = document.getElementById('shares').value; 
-            var expiry = document.getElementById('expiry').value;
-            var tknAmt = document.getElementById('tknAmt').value;
-            var ticker = document.getElementById('ticker_opt').value;
-
-            dApp.writeOptions(strike, premium, shares, expiry, tknAmt, ticker)}
-        </script>
-        <div class="card-action">
-            <a id="dapp-write-option" href="#" onclick="WriteOption()">Write Option</a>
+        <!--Ticker Text Field-->
+        <div class="input-field col s6">
+          <input type="text" name="ticker_opt" id="ticker_opt" class="validate">
+          <label for="ticker_opt">Ticker</label>
         </div>
 
-        <!--Get Eth Price-->
+         <!--Get Stock Price Button-->
+         <a class="waves-effect waves-light btn" id="dapp-get-stock-price" onclick="populatePrice()">Get Stock Price</a><br>
+        <br><br>
+  
+        <!--Stock Price Text Field-->
+        <div class="input-field col s6">
+          <input disabled placeholder="$" type="text" name="price" id="price" class="validate">
+          <label for="price">Stock Price</label>
+        </div>
+
+        <!--Strike Price Text Field-->
+        <div class="input-field col s6">
+          <input type="text" name="strike" id="strike" class="validate">
+          <label for="strike">Strike Price</label>
+        </div>
+
+        <!--Shares Text Field (default: 100)-->
+        <div class="input-field col s6">
+          <input type="text" name="shares" id="shares" class="validate" value="100">
+          <label for="shares">Shares per Contract</label>
+        </div>
+
+        <!--Expiration Date Selector-->
+        <label for="expiry">Expiration Date</label>
+        <input type="text" class="datepicker" name="expiry" id="expiry">
+        
+
+        <!--Get Premiumn Button-->
+        <a class="waves-effect waves-light btn" id="dapp-get-premium-price" onclick="getPremium()">Get Recommended Premium</a><br>
+        <br><br>
+
+        <!--Premium Text Field-->
+        <div class="float-container">
+          <div class="float-child">
+            Premium USD<input type="number" name="premium-usd" id="premium-usd" onchange="setOptionPremiumInEth()"><br>
+          </div>
+          <div class="float-child">
+            Premium ETH<input disabled type="number" name="premium-eth" id="premium-eth"><br>
+          </div>
+        </div>  
+
+        Token Amount (Wei) : <input disabled type="number" name="tknAmt" id="tknAmt"><br>
+
+        <!--Write Option Button-->
+        <a class="btn waves-effect waves-light" type="submit" id="dapp-write-option" onclick="submitWriteOption()">Write Option</a><br>
+        <br><br>
+
+        <!-- Get Eth Price
         <div class="card-action">
           <a id="dapp-get-eth-price" href="#" onclick="dApp.getEthPrice()">Get Eth Price</a>
-        </div>
+        </div> -->
 
-        <!--Get Stock Price-->
-        <script>
-          function StockPrice(){
-            dApp.getStockPrice(document.getElementById('stock_ticker').value)
-            }
-          </script>
-        <input type="text" name="ticker" id="stock_ticker"><br> 
-        <div class="card-action">
-          <a id="dapp-get-stock-price" href="#" onclick="StockPrice()">Get Stock Price</a>
-        </div>
+       
       </div>
 
       <div class="float-child">
@@ -88,9 +123,120 @@
     $(document).ready(function(){
       $('.collapsible').collapsible();
     });
+
+    // Date picker init
+    var currDate = new Date();
+    $(document).ready(function() {
+      $(".datepicker").datepicker({
+        // defaultDate: new Date(currDate),
+        // setDefaultDate: new Date(2000,01,31),
+        minDate: new Date(currDate),
+        format: "yyyy-mm-dd",
+        autoClose: true
+      });
+    });
+
+
+    // Get Stock Price
+    function StockPrice(){
+       return dApp.getStockPrice(document.getElementById('ticker_opt').value)
+    };
+
+
+
+    // Get Calculated Premium
+    async function getPremium(){
+      var symbol = document.getElementById("ticker_opt").value;
+      var price = document.getElementById("price").value;
+      var strike = document.getElementById("strike").value;
+      var mat_date = document.getElementById("expiry").value;
+      var flag = $("input[name=call_put_switch]:checked").next().text();
+      var parsed_flag;
+      if (flag == "Call"){
+        parsed_flag = "c";
+      }else{parsed_flag = "p";};
+
+      // debugging
+      console.log("symbol : ".concat(symbol));
+      console.log("price : ".concat(price));
+      console.log("strike : ".concat(strike));
+      console.log("mat_date : ".concat(mat_date));
+      console.log("flag : ".concat(parsed_flag));
+
+      // Calculate premium
+      var premium = await optionPremiumBlackScholes(symbol, price, strike, mat_date, parsed_flag);
+
+      console.log("premium : ".concat(premium));
+
+      // Set textbox to Premium
+      document.getElementById("premium-usd").value = premium;
+      setOptionPremiumInEth();
+
+    }
+
+    // Set Option Premium in ETH and Set Token Amount
+    async function setOptionPremiumInEth(){
+      // Set textboc to Premium in ETH
+      var premium = document.getElementById("premium-usd").value;
+      const premiumInEth = await convertUSDtoETH(premium)
+      document.getElementById("premium-eth").value = premiumInEth;
+      document.getElementById("tknAmt").value = Math.trunc(premiumInEth * 10**18);
+    }
+
+    // Convert USD to wei
+    async function convertUSDtoETH(USD){
+      const ethPrice = await dApp.getEthPrice();
+      const _ethPrice = ethPrice;
+      var priceInEth = USD / _ethPrice;
+      return priceInEth
+    }
+
+    // Write Option
+    function submitWriteOption(){
+      // Get Option flag -> Call or Put
+      var flag = $("input[name=call_put_switch]:checked").next().text();
+      console.log("flag : ".concat(flag))
+
+      // Get Ticker
+      var ticker = document.getElementById('ticker_opt').value;
+      console.log("ticker : ".concat(ticker))
+
+      // Get Strike Price
+      var strike = document.getElementById('strike').value;
+      console.log("strike : ".concat(strike))
+
+      // Get number of shares
+      var shares = document.getElementById('shares').value; 
+      console.log("shares : ".concat(shares))
+
+      // Get Expiry in Unix timestamp
+      var expiry = Math.round(new Date(document.getElementById('expiry').value).getTime()/1000);
+      console.log("expiry : ".concat(expiry))
+
+      // Get Premium in Wei
+      var premium = document.getElementById("tknAmt").value;
+      console.log("premium : ".concat(premium))
+
+      // Get Token Amount
+      var tknAmt = document.getElementById('tknAmt').value;
+      console.log("tknAmt : ".concat(tknAmt))
+      
+
+      // dApp.writeOptions(strike, premium, shares, expiry, tknAmt, ticker)
+    };
+
+    // Populates Stock Price in the text box
+    function populatePrice(){
+      StockPrice().then(function updatePriceField(_price){
+        document.getElementById("price").value = _price;
+      })
+    };
+
+    // Calculates Stock Option Premium in USD and ETH
+
   </script>
   <!-- dApp JavaScript -->
-  <script src="dapp.js"></script>
+  <script src="scripts/dapp.js"></script>
 
 </body>
 </html>

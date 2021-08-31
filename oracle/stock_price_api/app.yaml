@@ -1,2 +1,3 @@
 #app.yaml
-runtime: python37
+runtime: python39 # or another supported version
+instance_class: F4_1G

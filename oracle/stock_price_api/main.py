@@ -5,8 +5,10 @@ from scipy.stats import norm
 from math import log, sqrt, exp
 from datetime import datetime
 import json
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def home():
@@ -68,11 +70,11 @@ def BlackScholes(symbol : str,
     d2 = d1 - vol * sqrt(mat_time)
     
     # Calculate premium
-    if call_put_flag =='c':
+    if call_put_flag == 'c':
         premium = price * exp(-div * mat_time) * norm.cdf(d1) - strike * exp(-rf * mat_time) * norm.cdf(d2)
         return jsonify({"premium" : premium})
     
-    elif call_put_flag == "p":
+    elif call_put_flag == 'p':
         premium = strike * exp(-rf * mat_time) * norm.cdf(-d2) -price * exp(-div * mat_time) * norm.cdf(-d1)
         return jsonify({"premium" : premium})
     
@@ -115,8 +117,10 @@ def OptionPrice(symbol : str,
     closest_strike = min(option_chain["strike"], key=lambda x: abs(x - strike))
     option = option_chain[option_chain["strike"] == closest_strike]
     result = option.to_json(orient="split")
+    json_data = json.loads(result)
+    # premium = json_data[0]
     
-    return json.loads(result)
+    return jsonify({"premium" : str(json_data["data"][0][3])})
 
 
 if __name__ == '__main__':
