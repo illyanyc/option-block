@@ -1,5 +1,5 @@
 // Change this address to match your deployed contract!
-const contract_address = "0x14122EB49a71D2d4a3e373d861eF3459b25f0Dd4";
+const contract_address = "0x8087d6fFB2676c8799B926a09cc955c0e82cAec9";
 
 var oracle_Contracts = {
 'AAPL':	'0x57960D9E1244deB9181BdC2a6B34968718fed1A4',
@@ -14,44 +14,6 @@ var oracle_Contracts = {
 var EthPrice;
 var stockPrice;
 
-// async function getURL(url) {
-
-//     var premium;
-//     let obj = await (await fetch(url).then(response => 
-//       response.json().then(data => ({
-//           data: data,
-//           status: response.status
-//       })
-//       ).then(res => {
-//           console.log(res.status, res.data.premium);
-//           premium = res.data.premium;
-//       })););
-//     return premium;
-// }
-
-async function optionPremiumBlackScholes(symbol,price,strike,mat_date,flag){
-  var _price = String(parseFloat(price) * 100);
-  var _strike = String(parseFloat(strike) * 100);
-  var url = 'https://option-block.ue.r.appspot.com/option_yf/'+symbol+'/'+_strike+'/'+mat_date+'/'+flag;
-
-  // debug
-  console.log(url);
-
-  var premium;
-    let obj = await (await fetch(url).then(response => 
-      response.json().then(data => ({
-          data: data,
-          status: response.status
-        })
-        ).then(res => {
-            console.log(res.status, res.data.premium);
-            premium = res.data.premium;
-        })
-      )
-    );
-  return premium;
-}
-
 const dApp = {
   ethEnabled: function() {
     // If the browser has MetaMask installed
@@ -63,10 +25,18 @@ const dApp = {
     return false;
   },
 
-  // Writes option contract
-  writeOptions: async function(strike, premium, shares, expiry, tknAmt, ticker) {
-    this.contract.methods.writeCallOption(strike, premium, shares, expiry, ticker).send({from: this.accounts[0], value : tknAmt}).on("receipt", (receipt) => {
+  // Writes Call Option Contract
+  writeCallOption: async function(strike, premium, shares, expiry, tknAmt, ticker) {
+    this.contract.methods.writeCallOption(strike, premium, shares, expiry, tknAmt, ticker).send({from: this.accounts[0], value : tknAmt}).on("receipt", (receipt) => {
       M.toast({ html: "Call option successfully written." });
+      location.reload();
+    });
+  },
+
+  // Writes Put Option Contract
+  writePutOption: async function(strike, premium, shares, expiry, tknAmt, ticker) {
+    this.contract.methods.writePutOption(strike, premium, shares, expiry, tknAmt, ticker).send({from: this.accounts[0], value : tknAmt}).on("receipt", (receipt) => {
+      M.toast({ html: "Put option successfully written." });
       location.reload();
     });
   },
@@ -74,10 +44,9 @@ const dApp = {
   // Gets ETH price from ETH oracle
   getEthPrice: async function(){
     ethPrice = await this.ethOracle.methods.getClose().call();
-    var message = "ETHUSD : $".concat(ethPrice/100);
-    console.log(message);
-    M.toast({ html: message });
-    
+    // var message = "ETHUSD : $".concat(ethPrice/100);
+    // console.log(message);
+    // M.toast({ html: message });
     return ethPrice/100; 
   },
 

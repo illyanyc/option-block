@@ -1,5 +1,6 @@
 ![header](https://capsule-render.vercel.app/api?type=waving&color=gradient&width=1000&height=200&section=header&text=Option-Block&fontSize=30&fontColor=black)
-**Stock and crypto options on blockchain**
+
+## *Stock options on blockchain*
 
 ### Table of Contents
 * [Overview](#overview)
