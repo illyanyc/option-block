@@ -1,5 +1,6 @@
 // Change this address to match your deployed contract!
-const contract_address = "0xeeE4afbBB163d6818e3e2251fcA26B0fe2298d65";
+const contract_address = "0x2f77A91328d90c150f1Dc84097Bd55117f747E62";
+// const contract_address = "0xeeE4afbBB163d6818e3e2251fcA26B0fe2298d65";
 // const contract_address = "0x228d0BA8395Df6109A080A034f6dc99A6c71A483";
 // const contract_address = "0x1383fC8D9644f734414D8B05E5d204eBe3F7a31b";
 // const contract_address = "0x7b272e6c2E049f49742631f7dfE8a724B3c030Db";
@@ -41,7 +42,6 @@ const dApp = {
   writeCallOption: async function(strike, premium, shares, expiry, tknAmt, ticker) {
     this.contract.methods.writeCallOption(strike, premium, shares, expiry, tknAmt, ticker).send({from: this.accounts[0], value : tknAmt}).on("receipt", (receipt) => {
       M.toast({ html: "Call option successfully written." });
-      this.updateAll();
       location.reload();
     });
   },
@@ -50,7 +50,6 @@ const dApp = {
   writePutOption: async function(strike, premium, shares, expiry, tknAmt, ticker) {
     this.contract.methods.writePutOption(strike, premium, shares, expiry, tknAmt, ticker).send({from: this.accounts[0], value : tknAmt}).on("receipt", (receipt) => {
       M.toast({ html: "Put option successfully written." });
-      this.updateAll();
       location.reload();
     });
   },
@@ -59,18 +58,18 @@ const dApp = {
   buyOption: async function(ID, premium) {
     this.contract.methods.buyOption(ID).send({from: this.accounts[0], value : premium}).on("receipt", (receipt) => {
       M.toast({ html: "Call option successfully bought." });
-      this.updateAll();
       location.reload();
     });
   },
 
   // Cancel Option
   cancelOption: async function(ID) {
-    this.contract.methods.cancelOption(ID).send({from: this.accounts[0]}).on("receipt", (receipt) => {
-      M.toast({ html: "Call option successfully canceled." });
-      this.updateAll();
-      location.reload();
-    });
+    const canceled = await this.contract.methods.cancelOption(ID).send({from: this.accounts[0]});
+  },
+
+  // Exersize option
+  exercise: async function(ID) {
+    this.contract.methods.exercise(ID).send({from: this.accounts[0]});
   },
 
   // Gets ETH price from ETH oracle
@@ -102,11 +101,7 @@ const dApp = {
 
   // Get all options on the blokchain
   getAllAvailableOptions: async function() {
-    await this.contract.methods.getAllAvailableOptions().call().then((response) => {
-        if (response && response.length > 0) {
-            optionList = {response}['response'];
-        }
-    });
+    return await this.contract.methods.getAllAvailableOptions().call();
   },
 
   // Get all options written by user
@@ -118,10 +113,10 @@ const dApp = {
   getOptionsBought: async function() {
     return await this.contract.methods.getOptionsBought().call({from: this.accounts[0]});
   },
-  
-  // Update all blockchain data
-  updateAll: async function() {
-    this.getAllAvailableOptions();
+
+  // Update option values
+  updateOptionValues: async function() {
+    await this.contract.methods.updatePrices().call({from: this.accounts[0]});
   },
 
   main: async function() {
@@ -151,8 +146,6 @@ const dApp = {
 
     console.log("Contract object", this.contract);
 
-    // Get all data from blockchain
-    this.updateAll();
   }
 };
 

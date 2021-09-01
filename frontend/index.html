@@ -50,20 +50,20 @@
 
     <!--Portfolio-->
     <div class="row" id="portfolio">
-      <h5>Portfolio</h5>
+      <h4>Portfolio</h4>
       <div class="col s12">
         <!--Refresh Portfolio-->
-        <a class="btn waves-effect waves-light" type="submit" id="dapp-get-options" onclick="buildPortfolioTable()">Refresh Portfolio</a><br>
+        <a class="btn waves-effect waves-light" type="submit" id="dapp-get-options" onclick="popupateTables()">Refresh Portfolio</a><br>
         <br><br>
         <!--Long Option Positions-->
           <div class="row">
-            <h7>Long Positions</h7>
+            <h5>Long Positions</h5>
             <table id="myLongOptionsTable" class="responsive-table" border="1" >
             </table>
           </div>
         <!--Short Option Positions-->
           <div class="row">
-            <h7>Short Positions</h7>
+            <h5>Short Positions</h5>
             <table id="myShortOptionsTable" class="responsive-table" border="1" >
             </table>
           </div>
@@ -75,7 +75,7 @@
     <!--Write Options-->
     <div class="row" id="trade">
       <div class="col s12 m4 l3">
-        <h5>Write Options</h5>
+        <h4>Write Options</h4>
 
         <!--Call or Put Selector-->
         <form action="#">
@@ -165,19 +165,19 @@
       </div>
 
       <div class="col s12 m8 l9">
-        <h5>Optionbook</h5>
-        
+        <h4>Optionbook</h4>
+        <br>
         <a class="btn waves-effect waves-light" type="submit" id="dapp-get-options" onclick="buildAllAvailableOptionsTable()">View Optionbook</a><br>
         <br><br>
         <div class="row">
         <!--Call Options-->
           <div class="col s6">
-            <h7>Calls</h7>
+            <h5>Calls</h5>
             <table id="callOptionsTable" class="responsive-table" border="1" >
             </table>
           </div>
           <div class="col s6">
-            <h7>Puts</h7>
+            <h5>Puts</h5>
             <table id="putOptionsTable" class="responsive-table" border="1" >
             </table>
           </div>
@@ -222,6 +222,7 @@
     // Populate available options table
     async function buildAllAvailableOptionsTable(){
       // Check JSON
+      const optionList = await dApp.getAllAvailableOptions();
       console.log(optionList)
 
       // Get Eth Price
@@ -314,9 +315,14 @@
         }else if (isCallOption==false){
           type='Put'
         };
-
+          if (buyer == "0x0000000000000000000000000000000000000000"){
             myShortOptions += `<tr><td>${id}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td>
               <td>${premiumETH}</td><td>${buyer}</td><td>${writer}</td><td><a class="waves-effect waves-light btn" onclick="submitCancelOption(${id})">Cancel</a></td></tr>`;
+          }
+          else{
+            myShortOptions += `<tr><td>${id}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td>
+              <td>${premiumETH}</td><td>${buyer}</td><td>${writer}</td><td><a class="waves-effect waves-light btn disabled" onclick="submitCancelOption(${id})">Cancel</a></td></tr>`;
+          }
       };
 
       myShortOptions += "</table>";
@@ -326,7 +332,7 @@
     // Get Options Bought by user
     async function buildLongOptionsTable(){
       // Check JSON
-      const longOptionList = await dApp.getOptionsBought()
+      const longOptionList = await dApp.getOptionsBought();
       //console.log('getOptionsBought()');
       //console.log(longOptionList);
 
@@ -335,7 +341,7 @@
     
       // Generate Table
       var myLongOptions = "<table>";
-        myLongOptions += '<tr><td>ID</td><td>Type</td><td>Ticker</td><td>Strike</td><td>Shares</td><td>Premium USD</td><td>Premium Wei</td><td>Value</td><td>Buyer</td><td>Writer</td><td>Update Value</td><td>Exercise</td></th>'    
+        myLongOptions += '<tr><td>ID</td><td>Type</td><td>Ticker</td><td>Strike</td><td>Shares</td><td>Premium USD</td><td>Premium Wei</td><td>Value USD</td><td>Value Wei</td><td>Buyer</td><td>Writer</td><td>Exercise</td></th>'    
 
       for (let key in longOptionList) {
 
@@ -355,6 +361,7 @@
         const ticker = longOptionList[key][13];  
         
         const premiumUSD = premiumETH / 10**18 * ethPrice;
+        const latestValueUSD = latestValue / 10**18 * ethPrice;
         const expiryDate = new Date(expiry*1000).toLocaleString()
         var type;
 
@@ -364,9 +371,8 @@
           type='Put'
         };
             myLongOptions += `<tr><td>${id}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${Number(premiumUSD).toFixed(2)}</td>
-              <td>${premiumETH}</td><td>${latestValue}</td><td>${buyer}</td><td>${writer}</td>
-              <td><a class="waves-effect waves-light btn" onclick="">Update</a></td>
-              <td><a class="waves-effect waves-light btn" onclick="">Exercise</a></td></tr>`;
+              <td>${premiumETH}</td><td>${Number(latestValueUSD).toFixed(2)}</td><td>${latestValue}</td><td>${buyer}</td><td>${writer}</td>
+                            <td><a class="waves-effect waves-light btn" onclick="submitExerciseOption(${id})">Exercise</a></td></tr>`;
       };
 
       myLongOptions += "</table>";
@@ -374,10 +380,23 @@
     };
 
     // Build POrtfolio Table
-    async function buildPortfolioTable() {
+    async function popupateTables() {
+      await updateValues();
       await buildShortOptionsTable();
       await buildLongOptionsTable();
+      // await buildAllAvailableOptionsTable();
     }
+
+    //Update option values
+    async function updateValues() {
+      await dApp.updateOptionValues();
+    }
+
+    // Exersice option
+    async function submitExerciseOption(ID) {
+      await dApp.exercise(ID);
+    }
+
 
     // Populates Stock Price in the text box
     function populatePrice(){
