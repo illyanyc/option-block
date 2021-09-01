@@ -51,6 +51,85 @@
 
 ## Option Contracts
 
+### Option struct
+
+Option details for each option are stored in the form of a struct:
+```
+struct option {
+    uint strike;               //Price in USD option
+    uint ethPriceAtTimeOfWrite;//Eth Price in USD at time of write
+    uint premium;              //Fee in contract token that option writer charges
+    uint expiry;               //Unix timestamp of expiration time
+    uint amount;               //Amount of tokens the option contract is for
+    bool isCallOption;         //Is this a call option
+    bool exercised;            //Has option been exercised
+    bool canceled;             //Has option been canceled
+    uint id;                   //Unique ID of option, also array index
+    uint latestCost;           //Helper to show last updated cost to exercise
+    address payable writer;    //Issuer of option
+    address payable buyer;     //Buyer of option
+    string ticker;             //Ticker of the stock
+}
+```
+Most of the fields are the same as standard stock options, such as strike price, premium, expiration datetime, amount and whether the option is a call option or a put option. We have two booleans to keep track of the state of the option (exercised/canceled). And finally, we store the addresses of the writer and the buyer for ethereum transactions between the two parties.
+
+All options are stored in a public array on the Options contract, and users can view the details of each contract using its id (array index).
+
+### Writing, Buying, Exercising an Option
+
+The Options contract has a few public methods for users to interact with the options:
+
+1. Writing an Option
+
+```
+function writeCallOption(uint strike, uint premium, uint shares, uint expiry, uint tknAmt, string memory ticker) public payable;
+```
+
+Allows a user to write a call option. Users will need to provide the strike price of the underlying stock (USD * 100), the premium of this option, the expiration date (unix timestamp), the amount of ethereum this option is for, and the stock's ticker symbol. In addition, users will need to deposit enough ethereum as collateral to this contract; the amount of ethereum sent to the contract should be consistent with the token amount parameter.
+
+
+```
+function writePutOption(uint strike, uint premium, uint shares, uint expiry, uint tknAmt, string memory ticker) public payable;
+```
+
+Similar to writeCallOption, this function allows users to write covered put options.
+
+2. Buying an Option
+
+```
+function buyOption(uint ID) public payable;
+```
+
+If an option is still available on the market, i.e. the option has not been canceled, is not expired, buyer is null, a user can use the above function to buy the option. The user will need to send the corresponding eth as indicated by the premium field of the option. The premium will be sent to the writer of the option right away.
+
+3. Canceling an Option
+
+```
+function cancelOption(uint ID) public;
+```
+
+Users can cancel options that they have written and haven't been bought via the above method. The collateral eth will be refunded to the writer.
+
+4. Exercisinng an Option
+
+```
+function exercise(uint ID) public;
+```
+
+Users have the choice to exercise options that they bought previously, given that the option is not expired, using the exercise method. The value of the option is calculated as follows:
+* Call options: (current stock price - strike price) * number of shares / current eth price
+* Put options: (strike price - current stock price) * number of shares / current eth price
+Users will receive eth equal to the value of the option, up to the collateral deposited by the writer. Any remaining eth will be returned to the writer.
+
+5. Utility functions
+```
+function updatePrices() public;
+function getAllAvailableOptions() public view returns (option[] memory);
+function getMyOptions() public view returns (option[] memory);
+function getOptionsBought() public view returns (option[] memory);
+```
+
+In addition, the Options contract provide a few utility methods for the front-end as well as the user to view the options on the market.
 
 ---
 
