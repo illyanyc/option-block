@@ -135,7 +135,11 @@ In addition, the Options contract provide a few utility methods for the front-en
 
 ## Front End
 
+Utilized https://materializecss.com/ for a responsive front-end framework. User interacts through the page in three different sections.
 
+1. Portfolio - this displays user's current long and short positions. User is able to interact with current positions via "Update, Exercise, and Cancel" buttons.
+2. Write Options - user selects whether to write a call or a put. Stock price is pulled from custom oracle and the collateral needed to deposit is dependednt on user input of desired shares. Collateral needed is populated from back-end in USD & Wei. User also has the option to input custom amount of premium if desired.
+3. Orderbook - this displays current open orders. Buy buttons to the side of the contracts allow easy user interaction with the open orders.
 ---
 
 ## Back End
