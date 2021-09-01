@@ -16,16 +16,20 @@
 </head>
 
 <body class="grey lighten-3">
-  <nav>
-    <div class="nav-wrapper">
-      <a href="#" class="brand-logo">OPTION BLOCK</a>
-      <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="team.html">Team</a></li>
-        <li><a href="https://github.com/illyanyc/option-block">Code</a></li>
-      </ul>
-    </div>
-  </nav>
+  <div class="navbar-fixed">
+    <nav>
+      <div class="nav-wrapper">
+        <a href="#" class="brand-logo">OPTION BLOCK</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="#portfolio">Portfolio</a></li>
+          <li><a href="#trade">Trade</a></li>
+          <li><a href="team.html">Team</a></li>
+          <li><a href="https://github.com/illyanyc/option-block">Code</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
 
   <h/>
 
@@ -45,72 +49,32 @@
 
 
     <!--Portfolio-->
-    <div class="row">
+    <div class="row" id="portfolio">
       <h5>Portfolio</h5>
-      <div class="row">
-        <div class="col s6">
-          <h6>Long</h6>
-          <table class="responsive-table">
-            <thead>
-              <tr>
-                  <th>Ticker</th>
-                  <th>Strike</th>
-                  <th>Expiration</th>
-                  <th>Premium</th>
-                  <th>Value</th>
-                  <th>Update Value</th>
-                  <th>Exercise</th>
-              </tr>
-            </thead>
-    
-            <tbody>
-              <tr>
-                <td>AAPL</td>
-                <td>150.00</td>
-                <td>2021-09-30</td>
-                <td>3423423123</td>
-                <td>8347543753488</td>
-                <td><a class="waves-effect waves-light btn" onclick="">Update</a></td>
-                <td><a class="waves-effect waves-light btn" onclick="">Exercise</a></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="col s6">
-          <h6>Short</h6>
-          <table>
-            <thead>
-              <tr>
-                <th>Ticker</th>
-                <th>Strike</th>
-                <th>Expiration</th>
-                <th>Premium</th>
-                <th>Value</th>
-                <th>Fulfilled</th>
-                <th>Cancel</th>
-              </tr>
-            </thead>
-    
-            <tbody>
-              <tr>
-                <td>AAPL</td>
-                <td>150.00</td>
-                <td>2021-09-30</td>
-                <td>3423423123</td>
-                <td>847589347589348</td>
-                <td>False</td>
-                <td><a class="waves-effect waves-light btn" onclick="">Cancel</a></td>
-              </tr>
-            </tbody>
-          </table>
+      <div class="col s12">
+        <!--Refresh Portfolio-->
+        <a class="btn waves-effect waves-light" type="submit" id="dapp-get-options" onclick="buildPortfolioTable()">Refresh Portfolio</a><br>
+        <br><br>
+        <!--Long Option Positions-->
+          <div class="row">
+            <h7>Long Positions</h7>
+            <table id="myLongOptionsTable" class="responsive-table" border="1" >
+            </table>
+          </div>
+        <!--Short Option Positions-->
+          <div class="row">
+            <h7>Short Positions</h7>
+            <table id="myShortOptionsTable" class="responsive-table" border="1" >
+            </table>
+          </div>
         </div>
       </div>
     </div>
     <div class="divider"></div>
 
     <!--Write Options-->
-    <div class="row">
-      <div class="col s6 m6">
+    <div class="row" id="trade">
+      <div class="col s12 m4 l3">
         <h5>Write Options</h5>
 
         <!--Call or Put Selector-->
@@ -200,15 +164,24 @@
         <br><br>
       </div>
 
-      <div class="col s9 m6">
-        <h5>View Optionbook</h5>
-        <!--Write Option Button-->
-        <a class="btn waves-effect waves-light" type="submit" id="dapp-get-options" onclick="buildAllAvailableOptionsTable()">Get Options from Blockchain</a><br>
+      <div class="col s12 m8 l9">
+        <h5>Optionbook</h5>
+        
+        <a class="btn waves-effect waves-light" type="submit" id="dapp-get-options" onclick="buildAllAvailableOptionsTable()">View Optionbook</a><br>
         <br><br>
-        <!-- <body onLoad="buildAllAvailableOptionsTable()"> -->
-          <table id="optionsTable" class="responsive-table" border="1" >
-          </table>
-        <!-- </body>  -->
+        <div class="row">
+        <!--Call Options-->
+          <div class="col s6">
+            <h7>Calls</h7>
+            <table id="callOptionsTable" class="responsive-table" border="1" >
+            </table>
+          </div>
+          <div class="col s6">
+            <h7>Puts</h7>
+            <table id="putOptionsTable" class="responsive-table" border="1" >
+            </table>
+          </div>
+        </div>
       </div>
 
 
@@ -255,43 +228,156 @@
       const ethPrice = await dApp.getEthPrice();
     
       // Generate Table
-      var table = "<table>";
-      table += '<tr><td>Key</td><td>Type</td><td>Ticker</td><td>Strike</td><td>Shares</td><td>Premium USD</td><td>Premium Wei</td><td>ID</td><td>Buy</td></th>'
+      var callTable = "<table>";
+      callTable += '<tr><td>Type</td><td>Ticker</td><td>Strike</td><td>Shares</td><td>Expiry</td><td>Premium USD</td><td>Premium Wei</td><td>ID</td><td>Buy</td></th>'
+
+      var putTable = "<table>";
+      putTable += '<tr><td>Type</td><td>Ticker</td><td>Strike</td><td>Shares</td><td>Expiry</td><td>Premium USD</td><td>Premium Wei</td><td>ID</td><td>Buy</td></th>'
+    
+
       for (let key in optionList) {
 
         const strike = optionList[key][0];          //Price in USD option
-        const ethPriceAtTimeOfWrite = optionList[key][1];//Eth Price in USD at time of write
+        //const ethPriceAtTimeOfWrite = optionList[key][1];//Eth Price in USD at time of write
         const premiumETH = optionList[key][2];             //Fee in contract token that option writer charges
-        const premiumUSD = premiumETH / 10**18 * ethPrice;
         const shares = optionList[key][3];              //Number of shares in the option
         const expiry = optionList[key][4];            //Unix timestamp of expiration time
-        const amount = optionList[key][5];               //Amount of tokens the option contract is for
+        //const amount = optionList[key][5];               //Amount of tokens the option contract is for
         const isCallOption = optionList[key][6];        //Is this a call option
         const exercised = optionList[key][7];            //Has option been exercised
         const canceled = optionList[key][8];             //Has option been canceled
         const id = optionList[key][9];                  //Unique ID of option, also array index
-        const latestValue = optionList[key][10];           //Helper to show last updated value
-        const writer = optionList[key][11];    //Issuer of option
-        const buyer = optionList[key][12];     //Buyer of option
-        const ticker = optionList[key][13];   
+        //const latestValue = optionList[key][10];           //Helper to show last updated value
+        //const writer = optionList[key][11];    //Issuer of option
+        //const buyer = optionList[key][12];     //Buyer of option
+        const ticker = optionList[key][13];  
+        
+        const premiumUSD = premiumETH / 10**18 * ethPrice;
+        const expiryDate = new Date(expiry*1000).toLocaleString()
+        var type;
+
+        if (exercised == false && canceled==false){
+          if (isCallOption==true){
+            type = 'Call'
+            callTable += `<tr><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td><td>${premiumETH}</td><td>${id}</td><td><a class="waves-effect waves-light btn" onclick="submitBuyOption(${id}, ${premiumETH})">Buy</a></td></tr>`;
+          }else if (isCallOption==false){
+            type='Put'
+            putTable += `<tr><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td><td>${premiumETH}</td><td>${id}</td><td><a class="waves-effect waves-light btn" onclick="submitBuyOption(${id}, ${premiumETH})">Buy</a></td></tr>`;
+          };
+        }
+      }
+      callTable += "</table>";
+      document.getElementById("callOptionsTable").innerHTML = callTable;
+
+      putTable += "</table>";
+      document.getElementById("putOptionsTable").innerHTML = putTable;
+
+    };
+
+    // Get Options Written by user
+    async function buildShortOptionsTable(){
+      // Check JSON
+      const shortOptionList = await dApp.getMyOptions()
+      //console.log('getMyOptions()');
+      //console.log(shortOptionList);
+
+      // Get Eth Price
+      const ethPrice = await dApp.getEthPrice();
+    
+      // Generate Table
+      var myShortOptions = "<table>";
+      myShortOptions += '<tr><td>ID</td><td>Type</td><td>Ticker</td><td>Strike</td><td>Shares</td><td>Expiry</td><td>Premium USD</td><td>Premium Wei</td><td>Buyer</td><td>Writer</td><td>Cancel</td></th>'    
+
+      for (let key in shortOptionList) {
+
+        const strike = shortOptionList[key][0];                 //Price in USD option
+        const ethPriceAtTimeOfWrite = shortOptionList[key][1];   //Eth Price in USD at time of write                 
+        const premiumETH = shortOptionList[key][2];             //Fee in contract token that option writer charges
+        const shares = shortOptionList[key][3];                 //Number of shares in the option
+        const expiry = shortOptionList[key][4];                 //Unix timestamp of expiration time
+        const amount = shortOptionList[key][5];                 //Amount of tokens the option contract is for
+        const isCallOption = shortOptionList[key][6];           //Is this a call option
+        const exercised = shortOptionList[key][7];              //Has option been exercised
+        const canceled = shortOptionList[key][8];               //Has option been canceled
+        const id = shortOptionList[key][9];                     //Unique ID of option, also array index
+        const latestValue = shortOptionList[key][10];           //Helper to show last updated value
+        const writer = shortOptionList[key][11];                //Issuer of option
+        const buyer = shortOptionList[key][12];                 //Buyer of option
+        const ticker = shortOptionList[key][13]; 
+        
+        const premiumUSD = premiumETH / 10**18 * ethPrice;
+        const expiryDate = new Date(expiry*1000).toLocaleString()
         var type;
 
         if (isCallOption==true){
           type = 'Call'
-        }else{type='Put'};
+        }else if (isCallOption==false){
+          type='Put'
+        };
 
-        if (exercised == false && canceled==false){
-          table += `<tr><td>${key}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${premiumUSD}</td><td>${premiumETH}</td><td>${id}</td><td><a class="waves-effect waves-light btn" onclick="submitBuyOption(${id}, ${premiumETH})">Buy</a></td></tr>`;
-        }
-      }
-      table += "</table>";
-      document.getElementById("optionsTable").innerHTML = table;
+            myShortOptions += `<tr><td>${id}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td>
+              <td>${premiumETH}</td><td>${buyer}</td><td>${writer}</td><td><a class="waves-effect waves-light btn" onclick="submitCancelOption(${id})">Cancel</a></td></tr>`;
+      };
+
+      myShortOptions += "</table>";
+      document.getElementById("myShortOptionsTable").innerHTML = myShortOptions;
     };
 
-    // Get Stock Price
-    function StockPrice(){
-       return dApp.getStockPrice(document.getElementById('ticker_opt').value)
+    // Get Options Bought by user
+    async function buildLongOptionsTable(){
+      // Check JSON
+      const longOptionList = await dApp.getOptionsBought()
+      //console.log('getOptionsBought()');
+      //console.log(longOptionList);
+
+      // Get Eth Price
+      const ethPrice = await dApp.getEthPrice();
+    
+      // Generate Table
+      var myLongOptions = "<table>";
+        myLongOptions += '<tr><td>ID</td><td>Type</td><td>Ticker</td><td>Strike</td><td>Shares</td><td>Premium USD</td><td>Premium Wei</td><td>Value</td><td>Buyer</td><td>Writer</td><td>Update Value</td><td>Exercise</td></th>'    
+
+      for (let key in longOptionList) {
+
+        const strike = longOptionList[key][0];          //Price in USD option
+        const ethPriceAtTimeOfWrite = longOptionList[key][1];//Eth Price in USD at time of write
+        const premiumETH = longOptionList[key][2];             //Fee in contract token that option writer charges
+        const shares = longOptionList[key][3];              //Number of shares in the option
+        const expiry = longOptionList[key][4];            //Unix timestamp of expiration time
+        const amount = longOptionList[key][5];               //Amount of tokens the option contract is for
+        const isCallOption = longOptionList[key][6];        //Is this a call option
+        const exercised = longOptionList[key][7];            //Has option been exercised
+        const canceled = longOptionList[key][8];             //Has option been canceled
+        const id = longOptionList[key][9];                  //Unique ID of option, also array index
+        const latestValue = longOptionList[key][10];           //Helper to show last updated value
+        const writer = longOptionList[key][11];    //Issuer of option
+        const buyer = longOptionList[key][12];     //Buyer of option
+        const ticker = longOptionList[key][13];  
+        
+        const premiumUSD = premiumETH / 10**18 * ethPrice;
+        const expiryDate = new Date(expiry*1000).toLocaleString()
+        var type;
+
+        if (isCallOption==true){
+          type = 'Call'
+        }else if (isCallOption==false){
+          type='Put'
+        };
+            myLongOptions += `<tr><td>${id}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${Number(premiumUSD).toFixed(2)}</td>
+              <td>${premiumETH}</td><td>${latestValue}</td><td>${buyer}</td><td>${writer}</td>
+              <td><a class="waves-effect waves-light btn" onclick="">Update</a></td>
+              <td><a class="waves-effect waves-light btn" onclick="">Exercise</a></td></tr>`;
+      };
+
+      myLongOptions += "</table>";
+      document.getElementById("myLongOptionsTable").innerHTML = myLongOptions;
     };
+
+    // Build POrtfolio Table
+    async function buildPortfolioTable() {
+      await buildShortOptionsTable();
+      await buildLongOptionsTable();
+    }
 
     // Populates Stock Price in the text box
     function populatePrice(){
@@ -404,6 +490,8 @@
       return priceInEth
     }
 
+    //Interaction with dApp//
+
     // Write Option
     async function submitWriteOption(){
       const ethPrice = await dApp.getEthPrice();
@@ -448,9 +536,20 @@
       };
     };
 
-  async function submitBuyOption(ID, premium){
-    await dApp.buyOption(ID, premium);
-  }
+    // Buy Option
+    async function submitBuyOption(ID, premium){
+      await dApp.buyOption(ID, premium);
+    }
+
+    // Get Stock Price
+    function StockPrice(){
+      return dApp.getStockPrice(document.getElementById('ticker_opt').value)
+    };
+
+    // Cancel option
+    async function submitCancelOption(ID){
+      await dApp.cancelOption(ID);
+    }
 
   </script>
   <!-- dApp JavaScript -->
