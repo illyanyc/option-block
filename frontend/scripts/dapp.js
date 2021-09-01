@@ -126,7 +126,6 @@ const dApp = {
     }
 
     this.accounts = await window.web3.eth.getAccounts();
-    myAddress = this.accounts[0];
 
     this.optionABI = await (await fetch("./json/option_abi.json")).json();
     this.ethOracleABI = await (await fetch("./json/eth_oracle_abi.json")).json();
@@ -145,9 +144,9 @@ const dApp = {
     );
 
     console.log("Contract object", this.contract);
-
   }
 };
 
-dApp.main();
-// dApp.updateAll();
+// Init app
+dApp.main().then(function(){buildAllAvailableOptionsTable()});
+
