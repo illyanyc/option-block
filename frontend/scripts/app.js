@@ -66,43 +66,45 @@ async function buildShortOptionsTable(){
 
     // Generate Table
     var myShortOptions = "<table>";
-    myShortOptions += '<tr><td>ID</td><td>Type</td><td>Ticker</td><td>Strike</td><td>Shares</td><td>Expiry</td><td>Premium USD</td><td>Premium Wei</td><td>Buyer</td><td>Cancel</td></th>'    
+    myShortOptions += '<tr><td>ID</td><td>Type</td><td>Ticker</td><td>Strike</td><td>Shares</td><td>Expiry</td><td>Premium USD</td><td>Premium Wei</td><td>Value USD</td><td>Value Wei</td><td>Buyer</td><td>Cancel</td></th>'    
 
     for (let key in shortOptionList) {
 
-    const strike = shortOptionList[key][0];                 //Price in USD option
-    const ethPriceAtTimeOfWrite = shortOptionList[key][1];   //Eth Price in USD at time of write                 
-    const premiumETH = shortOptionList[key][2];             //Fee in contract token that option writer charges
-    const shares = shortOptionList[key][3];                 //Number of shares in the option
-    const expiry = shortOptionList[key][4];                 //Unix timestamp of expiration time
-    const amount = shortOptionList[key][5];                 //Amount of tokens the option contract is for
-    const isCallOption = shortOptionList[key][6];           //Is this a call option
-    const exercised = shortOptionList[key][7];              //Has option been exercised
-    const canceled = shortOptionList[key][8];               //Has option been canceled
-    const id = shortOptionList[key][9];                     //Unique ID of option, also array index
-    const latestValue = shortOptionList[key][10];           //Helper to show last updated value
-    const writer = shortOptionList[key][11];                //Issuer of option
-    const buyer = shortOptionList[key][12];                 //Buyer of option
-    const ticker = shortOptionList[key][13]; 
-    
-    const premiumUSD = premiumETH / 10**18 * ethPrice;
-    const latestValueUSD = latestValue / 10**18 * ethPrice;
-    const expiryDate = new Date(expiry*1000).toLocaleString()
-    var type;
+        const strike = shortOptionList[key][0];                 //Price in USD option
+        const ethPriceAtTimeOfWrite = shortOptionList[key][1];   //Eth Price in USD at time of write                 
+        const premiumETH = shortOptionList[key][2];             //Fee in contract token that option writer charges
+        const shares = shortOptionList[key][3];                 //Number of shares in the option
+        const expiry = shortOptionList[key][4];                 //Unix timestamp of expiration time
+        const amount = shortOptionList[key][5];                 //Amount of tokens the option contract is for
+        const isCallOption = shortOptionList[key][6];           //Is this a call option
+        const exercised = shortOptionList[key][7];              //Has option been exercised
+        const canceled = shortOptionList[key][8];               //Has option been canceled
+        const id = shortOptionList[key][9];                     //Unique ID of option, also array index
+        const latestValue = shortOptionList[key][10];           //Helper to show last updated value
+        const writer = shortOptionList[key][11];                //Issuer of option
+        const buyer = shortOptionList[key][12];                 //Buyer of option
+        const ticker = shortOptionList[key][13]; 
+        
+        const premiumUSD = premiumETH / 10**18 * ethPrice;
+        const latestValueUSD = latestValue / 10**18 * ethPrice;
+        const expiryDate = new Date(expiry*1000).toLocaleString()
+        var type;
 
-    if (isCallOption==true){
-        type = 'Call'
-    }else if (isCallOption==false){
-        type='Put'
-    };
-        if (buyer == "0x0000000000000000000000000000000000000000"){
-        myShortOptions += `<tr><td>${id}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td>
-            <td>${premiumETH}</td><td>${Number(latestValueUSD).toFixed(2)}</td><td>${buyer}</td><td><a class="waves-effect waves-light btn" onclick="submitCancelOption(${id})">Cancel</a></td></tr>`;
-        }
-        else{
-        myShortOptions += `<tr><td>${id}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td>
-            <td>${premiumETH}</td><td>${Number(latestValueUSD).toFixed(2)}</td><td>${buyer}</td><td><a class="waves-effect waves-light btn disabled" onclick="submitCancelOption(${id})">Cancel</a></td></tr>`;
-        }
+        if (isCallOption==true){
+            type = 'Call'
+        }else if (isCallOption==false){
+            type='Put'
+        };
+        if (!canceled && !exercised){
+            if (buyer == "0x0000000000000000000000000000000000000000"){
+            myShortOptions += `<tr><td>${id}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td>
+                <td>${premiumETH}</td><td>${Number(latestValueUSD).toFixed(2)}</td><td>${latestValue}</td><td>${buyer}</td><td><a class="waves-effect waves-light btn" onclick="submitCancelOption(${id})">Cancel</a></td></tr>`;
+            }
+            else{
+            myShortOptions += `<tr><td>${id}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td>
+                <td>${premiumETH}</td><td>${Number(latestValueUSD).toFixed(2)}</td><td>${latestValue}</td><td>${buyer}</td><td><a class="waves-effect waves-light btn disabled" onclick="submitCancelOption(${id})">Cancel</a></td></tr>`;
+            };
+        };
     };
 
     myShortOptions += "</table>";
@@ -125,41 +127,50 @@ async function buildLongOptionsTable(){
 
     for (let key in longOptionList) {
 
-    const strike = longOptionList[key][0];          //Price in USD option
-    const ethPriceAtTimeOfWrite = longOptionList[key][1];//Eth Price in USD at time of write
-    const premiumETH = longOptionList[key][2];             //Fee in contract token that option writer charges
-    const shares = longOptionList[key][3];              //Number of shares in the option
-    const expiry = longOptionList[key][4];            //Unix timestamp of expiration time
-    const amount = longOptionList[key][5];               //Amount of tokens the option contract is for
-    const isCallOption = longOptionList[key][6];        //Is this a call option
-    const exercised = longOptionList[key][7];            //Has option been exercised
-    const canceled = longOptionList[key][8];             //Has option been canceled
-    const id = longOptionList[key][9];                  //Unique ID of option, also array index
-    const latestValue = longOptionList[key][10];           //Helper to show last updated value
-    const writer = longOptionList[key][11];    //Issuer of option
-    const buyer = longOptionList[key][12];     //Buyer of option
-    const ticker = longOptionList[key][13];  
-    
-    const premiumUSD = premiumETH / 10**18 * ethPrice;
-    const latestValueUSD = latestValue / 10**18 * ethPrice;
-    const expiryDate = new Date(expiry*1000).toLocaleString()
-    var type;
+        const strike = longOptionList[key][0];          //Price in USD option
+        const ethPriceAtTimeOfWrite = longOptionList[key][1];//Eth Price in USD at time of write
+        const premiumETH = longOptionList[key][2];             //Fee in contract token that option writer charges
+        const shares = longOptionList[key][3];              //Number of shares in the option
+        const expiry = longOptionList[key][4];            //Unix timestamp of expiration time
+        const amount = longOptionList[key][5];               //Amount of tokens the option contract is for
+        const isCallOption = longOptionList[key][6];        //Is this a call option
+        const exercised = longOptionList[key][7];            //Has option been exercised
+        const canceled = longOptionList[key][8];             //Has option been canceled
+        const id = longOptionList[key][9];                  //Unique ID of option, also array index
+        const latestValue = longOptionList[key][10];           //Helper to show last updated value
+        const writer = longOptionList[key][11];    //Issuer of option
+        const buyer = longOptionList[key][12];     //Buyer of option
+        const ticker = longOptionList[key][13];  
+        
+        const premiumUSD = premiumETH / 10**18 * ethPrice;
+        const latestValueUSD = latestValue / 10**18 * ethPrice;
+        const expiryDate = new Date(expiry*1000).toLocaleString()
+        var type;
 
-    if (isCallOption==true){
-        type = 'Call'
-    }else if (isCallOption==false){
-        type='Put'
-    };
-        myLongOptions += `<tr><td>${id}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td>
-            <td>${premiumETH}</td><td>${Number(latestValueUSD).toFixed(2)}</td><td>${latestValue}</td><td>${writer}</td>
-                        <td><a class="waves-effect waves-light btn" onclick="submitExerciseOption(${id})">Exercise</a></td></tr>`;
+        if (isCallOption==true){
+            type = 'Call'
+        }else if (isCallOption==false){
+            type='Put'
+        };
+        if (!canceled && !exercised){
+            if (latestValue <= 0){
+                myLongOptions += `<tr><td>${id}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td>
+                    <td>${premiumETH}</td><td>${Number(latestValueUSD).toFixed(2)}</td><td>${latestValue}</td><td>${writer}</td>
+                                <td><a class="waves-effect waves-light btn disabled" onclick="submitExerciseOption(${id})">Exercise</a></td></tr>`;
+            }else{
+                myLongOptions += `<tr><td>${id}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td>
+                <td>${premiumETH}</td><td>${Number(latestValueUSD).toFixed(2)}</td><td>${latestValue}</td><td>${writer}</td>
+                            <td><a class="waves-effect waves-light btn" onclick="submitExerciseOption(${id})">Exercise</a></td></tr>`;
+
+            };
+        };
     };
 
     myLongOptions += "</table>";
     document.getElementById("myLongOptionsTable").innerHTML = myLongOptions;
 };
 
-// Build POrtfolio Table
+// Build Portfolio Table
 async function popupateTables() {
     // refresh only if connected to MetaMask and address is set
     if (undefined==dApp.accounts){

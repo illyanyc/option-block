@@ -1,9 +1,10 @@
 // Change this address to match your deployed contract!
-const contract_address = "0x2f77A91328d90c150f1Dc84097Bd55117f747E62";
+// const contract_address = "0x2f77A91328d90c150f1Dc84097Bd55117f747E62";
 // const contract_address = "0xeeE4afbBB163d6818e3e2251fcA26B0fe2298d65";
 // const contract_address = "0x228d0BA8395Df6109A080A034f6dc99A6c71A483";
 // const contract_address = "0x1383fC8D9644f734414D8B05E5d204eBe3F7a31b";
 // const contract_address = "0x7b272e6c2E049f49742631f7dfE8a724B3c030Db";
+const contract_address = "0xC4125a834a922B56787D817D707FBDFaF0B74d9A";
 
 
 var oracle_Contracts = {
