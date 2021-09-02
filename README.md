@@ -1,6 +1,7 @@
 ![ob_loogo](img/ob_name.png)
 
-#### [optionblock.app](https://storage.googleapis.com/www.optionblock.app/index.html) *"it's a decentralized stock option clearing house!"* - some blockchain developer
+#### [optionblock.app](https://storage.googleapis.com/www.optionblock.app/index.html) 
+#### *"it's a decentralized stock option clearing house!"* - some blockchain developer
 
 ---
 
