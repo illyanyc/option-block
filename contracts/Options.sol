@@ -14,14 +14,14 @@ contract Options {
         uint strike;               //Price in USD option
         uint ethPriceAtTimeOfWrite;//Eth Price in USD at time of write
         uint premium;              //Fee in contract token that option writer charges
-        uint shares;                //Number of shares in the option
+        uint shares;               //Number of shares in the option
         uint expiry;               //Unix timestamp of expiration time
         uint amount;               //Amount of tokens the option contract is for
         bool isCallOption;         //Is this a call option
         bool exercised;            //Has option been exercised
         bool canceled;             //Has option been canceled
         uint id;                   //Unique ID of option, also array index
-        uint latestValue;           //Helper to show last updated value
+        uint latestValue;          //Helper to show last updated value
         address payable writer;    //Issuer of option
         address payable buyer;     //Buyer of option
         string ticker;             //Ticker of the stock

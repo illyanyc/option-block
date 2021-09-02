@@ -66,7 +66,7 @@ async function buildShortOptionsTable(){
 
     // Generate Table
     var myShortOptions = "<table>";
-    myShortOptions += '<tr><td>ID</td><td>Type</td><td>Ticker</td><td>Strike</td><td>Shares</td><td>Expiry</td><td>Premium USD</td><td>Premium Wei</td><td>Value USD</td><td>Value Wei</td><td>Buyer</td><td>Cancel</td></th>'    
+    myShortOptions += '<tr><td>ID</td><td>Type</td><td>Ticker</td><td>Strike</td><td>Shares</td><td>Expiry</td><td>Premium USD</td><td>Premium Wei</td><td>Value USD</td><td>Value Wei</td><td>Status</td><td>Buyer</td><td>Cancel</td></th>'    
 
     for (let key in shortOptionList) {
 
@@ -98,11 +98,11 @@ async function buildShortOptionsTable(){
         if (!canceled && !exercised){
             if (buyer == "0x0000000000000000000000000000000000000000"){
             myShortOptions += `<tr><td>${id}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td>
-                <td>${premiumETH}</td><td>${Number(latestValueUSD).toFixed(2)}</td><td>${latestValue}</td><td>${buyer}</td><td><a class="waves-effect waves-light btn" onclick="submitCancelOption(${id})">Cancel</a></td></tr>`;
+                <td>${premiumETH}</td><td>${Number(latestValueUSD).toFixed(2)}</td><td>${latestValue}</td><td>Open</td><td>${buyer}</td><td><a class="waves-effect waves-light btn" onclick="submitCancelOption(${id})">Cancel</a></td></tr>`;
             }
             else{
             myShortOptions += `<tr><td>${id}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td>
-                <td>${premiumETH}</td><td>${Number(latestValueUSD).toFixed(2)}</td><td>${latestValue}</td><td>${buyer}</td><td><a class="waves-effect waves-light btn disabled" onclick="submitCancelOption(${id})">Cancel</a></td></tr>`;
+                <td>${premiumETH}</td><td>${Number(latestValueUSD).toFixed(2)}</td><td>${latestValue}</td><td>Filled</td><td>${buyer}</td><td><a class="waves-effect waves-light btn disabled" onclick="submitCancelOption(${id})">Cancel</a></td></tr>`;
             };
         };
     };
@@ -123,7 +123,7 @@ async function buildLongOptionsTable(){
 
     // Generate Table
     var myLongOptions = "<table>";
-    myLongOptions += '<tr><td>ID</td><td>Type</td><td>Ticker</td><td>Strike</td><td>Shares</td><td>Expiry</td><td>Premium USD</td><td>Premium Wei</td><td>Value USD</td><td>Value Wei</td><td>Writer</td><td>Exercise</td></th>'    
+    myLongOptions += '<tr><td>ID</td><td>Type</td><td>Ticker</td><td>Strike</td><td>Shares</td><td>Expiry</td><td>Premium USD</td><td>Premium Wei</td><td>Value USD</td><td>Value Wei</td><td>Status</td><td>Writer</td><td>Exercise</td></th>'    
 
     for (let key in longOptionList) {
 
@@ -155,11 +155,11 @@ async function buildLongOptionsTable(){
         if (!canceled && !exercised){
             if (latestValue <= 0){
                 myLongOptions += `<tr><td>${id}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td>
-                    <td>${premiumETH}</td><td>${Number(latestValueUSD).toFixed(2)}</td><td>${latestValue}</td><td>${writer}</td>
+                    <td>${premiumETH}</td><td>${Number(latestValueUSD).toFixed(2)}</td><td>${latestValue}</td><td>OTM</td><td>${writer}</td>
                                 <td><a class="waves-effect waves-light btn disabled" onclick="submitExerciseOption(${id})">Exercise</a></td></tr>`;
             }else{
                 myLongOptions += `<tr><td>${id}</td><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td>
-                <td>${premiumETH}</td><td>${Number(latestValueUSD).toFixed(2)}</td><td>${latestValue}</td><td>${writer}</td>
+                <td>${premiumETH}</td><td>${Number(latestValueUSD).toFixed(2)}</td><td>${latestValue}</td><td>ITM</td><td>${writer}</td>
                             <td><a class="waves-effect waves-light btn" onclick="submitExerciseOption(${id})">Exercise</a></td></tr>`;
 
             };
