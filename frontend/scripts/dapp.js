@@ -123,7 +123,7 @@ const dApp = {
   main: async function() {
     // Initialize web3
     if (!this.ethEnabled()) {
-      alert("Please install MetaMask to use this dApp!");
+      alert("Please install MetaMask to use OptionBlock!");
     }
 
     this.accounts = await window.web3.eth.getAccounts();
