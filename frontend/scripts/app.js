@@ -9,10 +9,10 @@ async function buildAllAvailableOptionsTable(){
 
     // Generate Table
     var callTable = "<table>";
-    callTable += '<tr><td>Type</td><td>Ticker</td><td>Strike</td><td>Shares</td><td>Expiry</td><td>Premium USD</td><td>Premium Wei</td><td>ID</td><td>Buy</td></th>'
+    callTable += '<tr><td>Ticker</td><td>Strike</td><td>Shares</td><td>Expiry</td><td>Premium USD</td><td>Premium Wei</td><td>ID</td><td>Buy</td></th>'
 
     var putTable = "<table>";
-    putTable += '<tr><td>Type</td><td>Ticker</td><td>Strike</td><td>Shares</td><td>Expiry</td><td>Premium USD</td><td>Premium Wei</td><td>ID</td><td>Buy</td></th>'
+    putTable += '<tr><td>Ticker</td><td>Strike</td><td>Shares</td><td>Expiry</td><td>Premium USD</td><td>Premium Wei</td><td>ID</td><td>Buy</td></th>'
 
 
     for (let key in optionList) {
@@ -39,10 +39,10 @@ async function buildAllAvailableOptionsTable(){
     if (exercised == false && canceled==false){
         if (isCallOption==true){
         type = 'Call'
-        callTable += `<tr><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td><td>${premiumETH}</td><td>${id}</td><td><a class="waves-effect waves-light btn" onclick="submitBuyOption(${id}, ${premiumETH})">Buy</a></td></tr>`;
+        callTable += `<tr><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td><td>${premiumETH}</td><td>${id}</td><td><a class="waves-effect waves-light btn" onclick="submitBuyOption(${id}, ${premiumETH})">Buy</a></td></tr>`;
         }else if (isCallOption==false){
         type='Put'
-        putTable += `<tr><td>${type}</td><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td><td>${premiumETH}</td><td>${id}</td><td><a class="waves-effect waves-light btn" onclick="submitBuyOption(${id}, ${premiumETH})">Buy</a></td></tr>`;
+        putTable += `<tr><td>${ticker}</td><td>${strike/100}</td><td>${shares}</td><td>${expiryDate}</td><td>${Number(premiumUSD).toFixed(2)}</td><td>${premiumETH}</td><td>${id}</td><td><a class="waves-effect waves-light btn" onclick="submitBuyOption(${id}, ${premiumETH})">Buy</a></td></tr>`;
         };
     }
     }
