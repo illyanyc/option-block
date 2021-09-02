@@ -1,7 +1,7 @@
 ![ob_loogo](img/ob_name.png)
 
 ### *"it's a decentralized stock option clearing house!"* - some blockchain developer
-
+### Check it out here -> [optionblock.app](https://storage.googleapis.com/www.optionblock.app/index.html)
 ---
 
 ## Table of Contents
