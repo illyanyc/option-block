@@ -82,7 +82,7 @@ conda install --file requirements.txt
 ```
 
 ### Solidity
-All Solidity smart contracts are developed, built and deployed in [Remix](https://remix.ethereum.org/). The contracts in the demo are deployed on the [Ropsten](https://ropsten.etherscan.io/) testnet. *Make sure to update the contract addresses of the Solidity option contracts and oracles in <code>[dapp.js](frontend\scripts\dapp.js)</code>, so that they are referenced correctly.
+All Solidity smart contracts are developed, built and deployed in [Remix](https://remix.ethereum.org/). The contracts in the demo are deployed on the [Ropsten](https://ropsten.etherscan.io/) testnet. *Make sure to update the contract addresses of the Solidity option contracts and oracles in <code>[dapp.js](frontend/scripts/dapp.js)</code>, so that they are referenced correctly.
 
 ### Deploying on the web
 Alternatively, the backend API, oracle and frontend services can be deployed on the web. There following are instructions for deployment on [Google Cloud Compute](https://cloud.google.com/) platform in the following order:
