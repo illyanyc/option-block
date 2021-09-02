@@ -236,7 +236,7 @@ The Oracle service is written in [Node.js](https://nodejs.org/en/) and is runing
 
 Connection to the Ethereum Ropsten Testnet is provided by [Infura](https://infura.io/) via [Web3.js](https://web3js.readthedocs.io/en/v1.4.0/), while the transactions are parsed via [ethereum-tx](https://github.com/ethereumjs/ethereumjs-tx) Node.js module. [node-fetch](https://www.npmjs.com/package/node-fetch) handles all imported modules.
 
-Exampled of an Oracle Contract:
+Example of an Oracle Contract:
 
 ```C#
 contract StockOracleAAPL {
