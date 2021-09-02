@@ -326,5 +326,5 @@ Where:
 * [Willy Feid](https://www.linkedin.com/in/william-feid/)
 * [Yourik Hacoupian, Ph.D.](https://www.linkedin.com/in/yhacoupian/)
 * [Illya Nayshevsky, Ph.D.](https://www.linkedin.com/in/illyanayshevskyy/)
-* Jay Yu
+* [Jay Yu](https://www.linkedin.com/in/zhe-yu-92425a127/)
 * [Tyler Wallace](https://www.linkedin.com/in/tyler-wallace-5904b757/)
