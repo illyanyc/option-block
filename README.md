@@ -75,7 +75,7 @@ npm install
 ```
 
 ### Python
-The backend API runs on Flask, which is a Python service. All requirements are available in the <code>[requirements.txt](oracle\stock_price_api\requirements.txt)</code> file. To install the requirements from your <code>conda</code> environment, <code>cd</code> into the <code>[oracle\stock_price_api\](oracle\stock_price_api)</code> directory and run:
+The backend API runs on Flask, which is a Python service. All requirements are available in the <code>[requirements.txt](oracle/stock_price_api/requirements.txt)</code> file. To install the requirements from your <code>conda</code> environment, <code>cd</code> into the <code>[oracle/stock_price_api](oracle/stock_price_api)</code> directory and run:
 
 ```python
 conda install --file requirements.txt
@@ -117,7 +117,7 @@ This module lets user write options for select stocks. User selects whether to w
 * User is then required to enter the <code>Strike Price</code> and <code>Shares per Contract</code>.
 * Collateral needed to secure the value of the option is then calculated : <code>Shares per Conract * Strike Price</code>
 * User is then required to select option expiry date from the <code>Expiration Date</code> calendar selector
-* Option premium that the option writer desires to charge is then retrived from backend [Flask API](oracle\stock_price_api) by clicking <code>Calc. Recommended Premium</code> button. The option premium can be adjusted based on the user preference and market conditions. The option premium will automaticall recalculate if the strike price or number of shares per contract is changed.
+* Option premium that the option writer desires to charge is then retrived from backend [Flask API](oracle/stock_price_api) by clicking <code>Calc. Recommended Premium</code> button. The option premium can be adjusted based on the user preference and market conditions. The option premium will automaticall recalculate if the strike price or number of shares per contract is changed.
 
 <img src="img/writeoptions_view.png" width=50%>
 
@@ -264,7 +264,7 @@ contract StockOracleAAPL {
 }
 ```
 
-The contract is updated with a new <code>Close</code> price by sending the value to the <code>setClose()</code> function, which can be accessed only by the contract administrator. The contract administrator address is hard coded in the <code>[oracle.js](oracle\oracle.js)</code> file for convinience of running a demo, but in production should always be hidden.
+The contract is updated with a new <code>Close</code> price by sending the value to the <code>setClose()</code> function, which can be accessed only by the contract administrator. The contract administrator address is hard coded in the <code>[oracle.js](oracle/oracle.js)</code> file for convinience of running a demo, but in production should always be hidden.
 
 The most up-to-date <code>Close</code> price can be retrieved by calling <code>getClose()</code> function or by simply calling the <code>close</code> public variable.
 
